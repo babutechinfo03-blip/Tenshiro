@@ -48,7 +48,7 @@ const MockEngine = ({ onStartTest }) => {
     const [stats, setStats] = useState(getMockStats());
 
     const mockTypes = [
-        { id: 'beginner', label: 'Beginner Level', icon: '🐣', desc: '40 Questions • 40 Mins', color: '#10b981', pattern: MOCK_PATTERNS.beginner },
+        { id: 'beginner', label: 'Beginner Level', icon: '🐣', desc: '40 Questions • 40 Mins', color: '#1A3263', pattern: MOCK_PATTERNS.beginner },
         { id: 'intermediate', label: 'Intermediate Level', icon: '🚀', desc: '60 Questions • 60 Mins', color: '#6366f1', pattern: MOCK_PATTERNS.intermediate },
         { id: 'advanced', label: 'Advanced Level', icon: '🔥', desc: '75 Questions • 75 Mins', color: '#f59e0b', pattern: MOCK_PATTERNS.advanced },
         { id: 'company', label: 'Company Placement', icon: '🏢', desc: 'TCS, Amazon, Microsoft Patterns', color: '#ec4899' },
@@ -111,7 +111,7 @@ const MockEngine = ({ onStartTest }) => {
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1rem', marginBottom: '2.5rem' }}>
                         {[
                             { l: 'Mocks Taken', v: stats.history.length, c: '#6366f1' },
-                            { l: 'Avg Accuracy', v: `${Math.round(stats.history.reduce((a, b) => a + b.accuracy, 0) / stats.history.length || 0)}%`, c: '#10b981' },
+                            { l: 'Avg Accuracy', v: `${Math.round(stats.history.reduce((a, b) => a + b.accuracy, 0) / stats.history.length || 0)}%`, c: '#1A3263' },
                             { l: 'Total XP', v: stats.xp.toLocaleString(), c: '#f59e0b' },
                             { l: 'Global Rank', v: stats.xp > 1000 ? '#452' : 'Unranked', c: '#ec4899' }
                         ].map((s, i) => (

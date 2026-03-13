@@ -299,8 +299,8 @@ export const TestEngine = ({ config, onFinish }) => {
                     <div style={{ display: 'flex', gap: 10, marginBottom: '2rem' }}>
                         <span style={{ fontSize: '0.7rem', padding: '4px 12px', borderRadius: 99, background: 'var(--bg-primary)', border: '1px solid var(--border)', color: 'var(--text-muted)', fontWeight: 800 }}>ID: #{q.id}</span>
                         <span style={{ fontSize: '0.7rem', padding: '4px 12px', borderRadius: 99, background: '#6366f115', color: '#6366f1', fontWeight: 800 }}>{q.difficulty}</span>
-                        <span style={{ fontSize: '0.7rem', padding: '4px 12px', borderRadius: 99, background: '#10b98115', color: '#10b981', fontWeight: 800 }}>{categoryLabels[q.category] || q.category}</span>
-                        <span style={{ fontSize: '0.7rem', padding: '4px 12px', borderRadius: 99, background: (q.negative_marks || 0) < 0 ? '#ef444415' : '#10b98115', color: (q.negative_marks || 0) < 0 ? '#ef4444' : '#10b981', fontWeight: 800 }}>M: +{q.marks || 1} / -{Math.abs(q.negative_marks || 0)}</span>
+                        <span style={{ fontSize: '0.7rem', padding: '4px 12px', borderRadius: 99, background: '#1A326315', color: '#1A3263', fontWeight: 800 }}>{categoryLabels[q.category] || q.category}</span>
+                        <span style={{ fontSize: '0.7rem', padding: '4px 12px', borderRadius: 99, background: (q.negative_marks || 0) < 0 ? '#ef444415' : '#1A326315', color: (q.negative_marks || 0) < 0 ? '#ef4444' : '#1A3263', fontWeight: 800 }}>M: +{q.marks || 1} / -{Math.abs(q.negative_marks || 0)}</span>
                     </div>
                     <p style={{ fontSize: '1.4rem', fontWeight: 600, color: 'var(--text-main)', lineHeight: 1.6, margin: 0 }}>{q.question}</p>
                 </div>
@@ -332,7 +332,7 @@ export const TestEngine = ({ config, onFinish }) => {
                     </div>
 
                     {cur === questions.length - 1 ? (
-                        <button onClick={() => setModal(true)} style={{ padding: '1rem 3.5rem', borderRadius: 18, border: 'none', background: 'linear-gradient(135deg, #10b981, #059669)', color: '#fff', fontWeight: 900, fontSize: '1rem', cursor: 'pointer', boxShadow: '0 10px 25px rgba(16, 185, 129, 0.3)' }}>Finish Session</button>
+                        <button onClick={() => setModal(true)} style={{ padding: '1rem 3.5rem', borderRadius: 18, border: 'none', background: 'linear-gradient(135deg, #1A3263, #059669)', color: '#fff', fontWeight: 900, fontSize: '1rem', cursor: 'pointer', boxShadow: '0 10px 25px rgba(26, 50, 99, 0.3)' }}>Finish Session</button>
                     ) : (
                         <button onClick={() => setCur(c => c + 1)} style={{ padding: '1rem 3.5rem', borderRadius: 18, border: 'none', background: config.color || '#6366f1', color: '#fff', fontWeight: 900, fontSize: '1rem', cursor: 'pointer', boxShadow: `0 10px 25px ${(config.color || '#6366f1')}30` }}>Next Question →</button>
                     )}
@@ -354,7 +354,7 @@ export const TestEngine = ({ config, onFinish }) => {
                                 <button key={i} onClick={() => setCur(i)} className="q-btn"
                                     style={{
                                         aspectRatio: 1, borderRadius: 12, border: 'none', fontWeight: 900, fontSize: '0.85rem', cursor: 'pointer', transition: 'all 0.2s',
-                                        background: status === 'active' ? (config.color || '#6366f1') : status === 'marked' ? '#f59e0b' : status === 'answered' ? '#10b981' : 'var(--bg-primary)',
+                                        background: status === 'active' ? (config.color || '#6366f1') : status === 'marked' ? '#f59e0b' : status === 'answered' ? '#1A3263' : 'var(--bg-primary)',
                                         color: status === 'none' ? 'var(--text-muted)' : '#fff',
                                         boxShadow: status === 'active' ? `0 0 15px ${(config.color || '#6366f1')}40` : 'none'
                                     }}>
@@ -366,7 +366,7 @@ export const TestEngine = ({ config, onFinish }) => {
 
 
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 12, fontSize: '0.75rem', color: 'var(--text-muted)', borderTop: '1px solid var(--border)', paddingTop: '1.5rem' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}><div style={{ width: 12, height: 12, borderRadius: 3, background: '#10b981' }} /> Answered</div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}><div style={{ width: 12, height: 12, borderRadius: 3, background: '#1A3263' }} /> Answered</div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}><div style={{ width: 12, height: 12, borderRadius: 3, background: '#f59e0b' }} /> Marked for Review</div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}><div style={{ width: 12, height: 12, borderRadius: 3, background: 'var(--bg-primary)' }} /> Not Attempted</div>
                     </div>
@@ -387,7 +387,7 @@ export const TestEngine = ({ config, onFinish }) => {
                         <p style={{ color: 'var(--text-muted)', marginBottom: '2.5rem', lineHeight: 1.6 }}>You have attempted <strong>{Object.keys(ans).length}</strong> questions out of <strong>{questions.length}</strong>. Once submitted, you cannot modify your answers.</p>
                         <div style={{ display: 'flex', gap: 15 }}>
                             <button onClick={() => setModal(false)} style={{ flex: 1, padding: '1rem', borderRadius: 16, border: '1px solid var(--border)', background: 'transparent', color: 'var(--text-main)', fontWeight: 800, cursor: 'pointer' }}>Cancel</button>
-                            <button onClick={() => { setModal(false); doSubmit(); }} style={{ flex: 1.5, padding: '1rem', borderRadius: 16, border: 'none', background: 'linear-gradient(135deg, #10b981, #059669)', color: '#fff', fontWeight: 900, cursor: 'pointer' }}>Yes, Submit Test</button>
+                            <button onClick={() => { setModal(false); doSubmit(); }} style={{ flex: 1.5, padding: '1rem', borderRadius: 16, border: 'none', background: 'linear-gradient(135deg, #1A3263, #059669)', color: '#fff', fontWeight: 900, cursor: 'pointer' }}>Yes, Submit Test</button>
                         </div>
                     </div>
                 </div>
@@ -395,7 +395,7 @@ export const TestEngine = ({ config, onFinish }) => {
 
             {isSubmitting && (
                 <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.8)', zIndex: 2000, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 20 }}>
-                    <div style={{ border: '5px solid #fff2', borderTop: '5px solid #10b981', borderRadius: '50%', width: 60, height: 60, animation: 'spin 1.5s linear infinite' }}></div>
+                    <div style={{ border: '5px solid #fff2', borderTop: '5px solid #1A3263', borderRadius: '50%', width: 60, height: 60, animation: 'spin 1.5s linear infinite' }}></div>
                     <div style={{ color: '#fff', fontWeight: 800, fontSize: '1.2rem' }}>Calculating Real-Time Score...</div>
                 </div>
             )}

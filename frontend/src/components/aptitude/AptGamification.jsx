@@ -29,7 +29,7 @@ const AptGamification = ({ perf }) => {
                 <div style={{ display: 'grid', gap: '0.75rem' }}>
                     {[
                         { l: 'Novice', p: '0-20%', active: attempts.length < 5, c: '#94a3b8' },
-                        { l: 'Scholar', p: '20-50%', active: attempts.length >= 5 && attempts.length < 15, c: '#10b981' },
+                        { l: 'Scholar', p: '20-50%', active: attempts.length >= 5 && attempts.length < 15, c: '#1A3263' },
                         { l: 'Master', p: '50-80%', active: attempts.length >= 15 && attempts.length < 50, c: '#6366f1' },
                         { l: 'Elite', p: '80%+', active: attempts.length >= 50, c: '#a855f7' }
                     ].map((level, i) => (

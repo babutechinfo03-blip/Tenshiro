@@ -5,7 +5,7 @@ import { CATEGORIES, TRACKS, COMPANY_DETAILS, BADGES, RESOURCES, PIPELINE_STEPS,
 // ─── Utils ─────────────────────────────────────────────────────────────────────
 export const avg = arr => arr.length ? Math.round(arr.reduce((s, x) => s + x, 0) / arr.length) : 0;
 export const pctile = p => p >= 95 ? '99th' : p >= 85 ? '95th' : p >= 75 ? '85th' : p >= 65 ? '75th' : p >= 50 ? '60th' : '20th';
-export const grade = p => p >= 80 ? { l: 'Excellent 🏆', c: '#10b981' } : p >= 65 ? { l: 'Good 👍', c: '#6366f1' } : p >= 50 ? { l: 'Average 📚', c: '#f59e0b' } : { l: 'Needs Work 💪', c: '#ef4444' };
+export const grade = p => p >= 80 ? { l: 'Excellent 🏆', c: '#1A3263' } : p >= 65 ? { l: 'Good 👍', c: '#6366f1' } : p >= 50 ? { l: 'Average 📚', c: '#f59e0b' } : { l: 'Needs Work 💪', c: '#ef4444' };
 
 // loadP — load aptitude performance data from localStorage (used by Chatbot for context)
 export const loadP = () => {
@@ -102,7 +102,7 @@ export const HeroSection = ({ kpis, perf }) => {
         { l: 'Aptitude Index', v: `${kpis.overall}%`, c: '#6366f1', i: '🧠', s: `${kpis.total} tests taken` },
         { l: 'Placement Ready', v: `${kpis.placement}%`, c: '#8b5cf6', i: '💻', s: 'IT companies' },
         { l: 'Govt Readiness', v: `${kpis.govt}%`, c: '#f59e0b', i: '🏛️', s: 'SSC/IBPS/UPSC' },
-        { l: 'Company Conf.', v: `${kpis.company}%`, c: '#10b981', i: '🏢', s: 'Mock avg' },
+        { l: 'Company Conf.', v: `${kpis.company}%`, c: '#1A3263', i: '🏢', s: 'Mock avg' },
         { l: 'Speed Index', v: `${kpis.speed}pts`, c: '#06b6d4', i: '⚡', s: 'Time efficiency' },
         { l: 'Score Trend', v: trend.length > 1 ? (trend[trend.length - 1] >= trend[0] ? '📈 Up' : '📉 Dip') : '⚡ Start', c: '#ec4899', i: '📊', s: trend.length > 1 ? `${trend[0]}% → ${trend[trend.length - 1]}%` : 'Take tests to see' },
     ];
@@ -291,7 +291,7 @@ export const CompanyMode = ({ onStart }) => {
 
     return (
         <div style={{ marginBottom: '2.5rem' }}>
-            <SH c="#10b981" t="Company & Exam Intelligence" s="Analyze patterns of 50+ companies, MNCs, and Government exams" />
+            <SH c="#1A3263" t="Company & Exam Intelligence" s="Analyze patterns of 50+ companies, MNCs, and Government exams" />
 
             <div style={{ display: 'flex', gap: '1.5rem', height: 600 }}>
                 {/* Search & List Sidebar */}
@@ -457,7 +457,7 @@ export const ResourceEngine = ({ perf, onBookmark, onStatusUpdate }) => {
     const statusMap = perf.resourceStatus || {}; // { title: 'Completed' }
 
     const icons = { video: '▶️', pdf: '📄', download: '💾', book: '📚', shortcut: '⚡', formula: '🧬', mock: '🎯', pyq: '⌛' };
-    const colors = { video: '#6366f1', pdf: '#ef4444', shortcut: '#f59e0b', formula: '#10b981', mock: '#ec4899', pyq: '#06b6d4' };
+    const colors = { video: '#6366f1', pdf: '#ef4444', shortcut: '#f59e0b', formula: '#1A3263', mock: '#ec4899', pyq: '#06b6d4' };
 
     return (
         <div style={{ marginBottom: '2.5rem' }}>
@@ -495,7 +495,7 @@ export const ResourceEngine = ({ perf, onBookmark, onStatusUpdate }) => {
                             }).map((res, i) => {
                                 const bookmarked = bm.includes(res.title);
                                 const status = statusMap[res.title] || 'Not Started';
-                                const statusColor = status === 'Completed' ? '#10b981' : status === 'In Progress' ? '#f59e0b' : 'var(--text-muted)';
+                                const statusColor = status === 'Completed' ? '#1A3263' : status === 'In Progress' ? '#f59e0b' : 'var(--text-muted)';
 
                                 return (
                                     <div key={i} style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)', borderRadius: 14, padding: '1rem', display: 'flex', alignItems: 'center', gap: 12, transition: 'all .2s' }}>
@@ -560,7 +560,7 @@ export const GamificationPanel = ({ perf, radar }) => {
                     ) : (
                         <div style={{ display: 'flex', alignItems: 'flex-end', gap: 6, height: 80 }}>
                             {(perf.attempts || []).slice(-10).map((a, i) => {
-                                const tc = a.pct >= 70 ? '#10b981' : a.pct >= 40 ? '#f59e0b' : '#ef4444';
+                                const tc = a.pct >= 70 ? '#1A3263' : a.pct >= 40 ? '#f59e0b' : '#ef4444';
                                 const lbl = { quantitative: 'Q', logical: 'L', verbal: 'V', dataInterpretation: 'DI' };
                                 return (
                                     <div key={i} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3 }} title={`${a.pct}%`}>

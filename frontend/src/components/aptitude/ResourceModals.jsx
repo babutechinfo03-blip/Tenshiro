@@ -350,7 +350,7 @@ export const PYQModal = ({ topic, mode, questions, sets, onClose }) => {
                                     return (
                                         <button key={i} onClick={() => handleAnswer(i)}
                                             style={{ padding: '.85rem 1.25rem', borderRadius: 11, border: `2px solid ${border}`, background: bg, color, fontWeight: isAnswered && isCorrect ? 800 : 600, fontSize: '.88rem', cursor: isAnswered ? 'default' : 'pointer', textAlign: 'left', transition: 'all .15s', fontFamily: 'Inter,sans-serif', display: 'flex', alignItems: 'center', gap: 10 }}>
-                                            <span style={{ minWidth: 24, height: 24, borderRadius: 6, background: isAnswered ? (isCorrect ? '#10b981' : isChosen ? '#ef4444' : '#e2e8f0') : '#e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '.75rem', fontWeight: 900, color: isAnswered && (isCorrect || isChosen) ? '#fff' : '#64748b', flexShrink: 0 }}>
+                                            <span style={{ minWidth: 24, height: 24, borderRadius: 6, background: isAnswered ? (isCorrect ? '#1A3263' : isChosen ? '#ef4444' : '#e2e8f0') : '#e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '.75rem', fontWeight: 900, color: isAnswered && (isCorrect || isChosen) ? '#fff' : '#64748b', flexShrink: 0 }}>
                                                 {isAnswered ? (isCorrect ? '✓' : isChosen ? '✕' : String.fromCharCode(65 + i)) : String.fromCharCode(65 + i)}
                                             </span>
                                             {opt}
@@ -381,13 +381,13 @@ export const PYQModal = ({ topic, mode, questions, sets, onClose }) => {
                 <div className="rm-footer">
                     <button onClick={resetQuiz} className="rm-btn secondary">🔄 Restart</button>
                     <span style={{ fontSize: '.78rem', color: '#94a3b8', marginLeft: '.5rem' }}>
-                        Score: <strong style={{ color: score > answeredCount / 2 ? '#10b981' : '#ef4444' }}>{score}/{answeredCount || 0}</strong>
+                        Score: <strong style={{ color: score > answeredCount / 2 ? '#1A3263' : '#ef4444' }}>{score}/{answeredCount || 0}</strong>
                     </span>
                     <div style={{ marginLeft: 'auto', display: 'flex', gap: '.6rem' }}>
                         <button onClick={() => { if (qIdx > 0) setQIdx(i => i - 1); }} className="rm-btn secondary" disabled={qIdx === 0} style={{ opacity: qIdx === 0 ? .4 : 1 }}>← Prev</button>
                         {qIdx < total - 1
                             ? <button onClick={() => setQIdx(i => i + 1)} className="rm-btn primary">Next →</button>
-                            : <button onClick={onClose} className="rm-btn primary" style={{ background: 'linear-gradient(135deg,#10b981,#059669)' }}>✓ Finish</button>
+                            : <button onClick={onClose} className="rm-btn primary" style={{ background: 'linear-gradient(135deg,#1A3263,#059669)' }}>✓ Finish</button>
                         }
                     </div>
                 </div>
@@ -428,7 +428,7 @@ export const ResourceButton = ({ icon, label, desc, isNew, fileSize, readTime, o
             <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
                     <span style={{ fontWeight: 700, fontSize: '.85rem', color: '#0f172a' }}>{label}</span>
-                    {isNew && <span style={{ fontSize: '.6rem', background: '#10b981', color: '#fff', borderRadius: 99, padding: '1px 6px', fontWeight: 800, letterSpacing: '.4px' }}>NEW</span>}
+                    {isNew && <span style={{ fontSize: '.6rem', background: '#1A3263', color: '#fff', borderRadius: 99, padding: '1px 6px', fontWeight: 800, letterSpacing: '.4px' }}>NEW</span>}
                 </div>
                 <div style={{ fontSize: '.73rem', color: '#94a3b8', marginTop: 2 }}>{desc}</div>
                 {(fileSize || readTime) && (

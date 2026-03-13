@@ -105,8 +105,8 @@ export const CareerNavigator = ({ perf, radar, activeTab }) => {
                         <div style={{ width: 45, height: 45, borderRadius: 14, background: 'linear-gradient(135deg, #6366f1, #a855f7)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.5rem' }}>🤖</div>
                         <div style={{ flex: 1 }}>
                             <div style={{ fontSize: '1rem', fontWeight: 900, color: '#fff' }}>CareerNavigator AI</div>
-                            <div style={{ fontSize: '0.7rem', color: '#10b981', fontWeight: 700, display: 'flex', alignItems: 'center', gap: 4 }}>
-                                <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#10b981', display: 'inline-block' }}></span>
+                            <div style={{ fontSize: '0.7rem', color: '#1A3263', fontWeight: 700, display: 'flex', alignItems: 'center', gap: 4 }}>
+                                <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#1A3263', display: 'inline-block' }}></span>
                                 Proactive Guidance Active
                             </div>
                         </div>
@@ -116,7 +116,7 @@ export const CareerNavigator = ({ perf, radar, activeTab }) => {
                     <div style={{ padding: '0.75rem 1.5rem', background: 'rgba(255, 255, 255, 0.03)', borderBottom: '1px solid rgba(255, 255, 255, 0.05)', display: 'flex', gap: 10, overflowX: 'auto' }} className="custom-scroll-hidden">
                         <div style={{ whiteSpace: 'nowrap', padding: '4px 10px', borderRadius: 8, background: '#6366f115', border: '1px solid #6366f130', fontSize: '0.65rem', color: '#6366f1', fontWeight: 800 }}>⚡ Eligibility: High</div>
                         <div style={{ whiteSpace: 'nowrap', padding: '4px 10px', borderRadius: 8, background: '#f59e0b15', border: '1px solid #f59e0b30', fontSize: '0.65rem', color: '#f59e0b', fontWeight: 800 }}>🎯 Target: Amazon</div>
-                        <div style={{ whiteSpace: 'nowrap', padding: '4px 10px', borderRadius: 8, background: '#10b98115', border: '1px solid #10b98130', fontSize: '0.65rem', color: '#10b981', fontWeight: 800 }}>🚀 Streak: {perf.streak || 0}d</div>
+                        <div style={{ whiteSpace: 'nowrap', padding: '4px 10px', borderRadius: 8, background: '#1A326315', border: '1px solid #1A326330', fontSize: '0.65rem', color: '#1A3263', fontWeight: 800 }}>🚀 Streak: {perf.streak || 0}d</div>
                     </div>
 
                     {/* Messages Area */}

@@ -301,7 +301,7 @@ ${personal.name || '[Your Name]'}
                         <h2 style={{ fontSize: '1.2rem', fontWeight: 900, margin: 0 }}>Smart Editor</h2>
                         <span style={{ fontSize: '0.7rem', color: '#6366f1', fontWeight: 800, textTransform: 'uppercase' }}>{template.company} • {template.name}</span>
                     </div>
-                    {isSaving && <motion.div animate={{ opacity: [0, 1, 0] }} transition={{ repeat: Infinity, duration: 1.5 }}><FiSave style={{ color: '#10b981' }} /></motion.div>}
+                    {isSaving && <motion.div animate={{ opacity: [0, 1, 0] }} transition={{ repeat: Infinity, duration: 1.5 }}><FiSave style={{ color: '#1A3263' }} /></motion.div>}
                 </div>
 
                 <div className="custom-scroll" style={{ flex: 1, overflowY: 'auto', padding: '1.5rem' }}>
@@ -710,7 +710,7 @@ ${personal.name || '[Your Name]'}
                                     <div style={{ display: 'flex', flexDirection: 'column', gap: 15 }}>
                                         {[1, 2, 3].map(i => (
                                             <div key={i} style={{ display: 'flex', gap: 12 }}>
-                                                <FiCheckCircle style={{ color: '#10b981', marginTop: 4 }} />
+                                                <FiCheckCircle style={{ color: '#1A3263', marginTop: 4 }} />
                                                 <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-muted)' }}>Use action verbs like 'Architected' and 'Spearheaded' for impact.</p>
                                             </div>
                                         ))}

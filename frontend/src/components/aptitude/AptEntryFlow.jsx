@@ -14,7 +14,7 @@ const AptEntryFlow = ({ onSelectGoal }) => {
 
     const ACTIVITIES = [
         { id: 'learn', label: 'Learn Concepts', icon: '📚', desc: 'A-Z topic coverage', color: '#6366f1' },
-        { id: 'practice', label: 'Practice Topic-wise', icon: '✏️', desc: 'Targeted skill building', color: '#10b981' },
+        { id: 'practice', label: 'Practice Topic-wise', icon: '✏️', desc: 'Targeted skill building', color: '#1A3263' },
         { id: 'mock', label: 'Take Full Mock Test', icon: '📋', desc: 'Full exam simulation', color: '#f59e0b' },
         { id: 'company', label: 'Company / Exam Based Test', icon: '🏢', desc: 'Pattern specific practice', color: '#a855f7' },
         { id: 'analytics', label: 'Analyze My Performance', icon: '📊', desc: 'Detailed insights & AI tips', color: '#ec4899' },

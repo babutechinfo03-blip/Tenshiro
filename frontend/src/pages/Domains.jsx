@@ -4,7 +4,7 @@ import axios from 'axios';
 import {
     FaCode, FaBuilding, FaChartLine, FaCogs, FaPalette, FaBriefcase,
     FaRobot, FaArrowRight, FaHeartbeat, FaGavel, FaGlobe,
-    FaDraftingCompass, FaSearch, FaFilter, FaLayerGroup, FaBolt, FaUsers, FaMapMarkedAlt, FaBrain
+    FaDraftingCompass, FaSearch, FaFilter, FaLayerGroup, FaBolt, FaUsers, FaMapMarkedAlt, FaBrain, FaStar
 } from 'react-icons/fa';
 import { motion as Motion } from 'framer-motion';
 import { useLanguage } from '../context/LanguageContext';
@@ -58,12 +58,12 @@ const Domains = () => {
             try {
                 const res = await axios.get('/api/domains');
                 // Ensure data has inferred properties for elite UI
-                const enrichedData = res.data.map(d => ({
+                const enrichedData = (res.data || []).map(d => ({
                     ...d,
-                    category: getDomainCategory(d.name),
-                    growthLevel: d.name.includes('IT') || d.name.includes('AI') ? 'High Demand' :
-                        d.name.includes('Gov') ? 'Competitive' :
-                            d.name.includes('Art') ? 'Emerging' : 'Stable'
+                    category: getDomainCategory(d.name || ''),
+                    growthLevel: (d.name || '').includes('IT') || (d.name || '').includes('AI') ? 'High Demand' :
+                        (d.name || '').includes('Gov') ? 'Competitive' :
+                            (d.name || '').includes('Art') ? 'Emerging' : 'Stable'
                 }));
                 setDomains(enrichedData);
             } catch (err) {
@@ -93,86 +93,105 @@ const Domains = () => {
     );
 
     return (
-        <div className="domains-discovery-page">
-            <div className="discovery-bg-elements">
-                <div className="discovery-blob blob-1" />
-                <div className="discovery-blob blob-2" />
+        <div className="domains-elite-container">
+            <div className="neural-background">
+                <div className="dot-grid" />
+                <div className="glow-sphere-primary" />
+                <div className="glow-sphere-secondary" />
             </div>
 
-            {/* HERO HEADER SECTION (Minimal) */}
-            <header className="discovery-header-minimal">
+            {/* HERO HEADER SECTION (Elite) */}
+            <header className="domains-hero-elite">
                 <Motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="hero-inner-minimal"
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="hero-inner-elite"
                 >
                     <div className="hero-badge">
-                        <FaLayerGroup />
-                        <span>{t('domains.badge')}</span>
+                        <FaStar />
+                        <span>{t('domains.badge', { defaultValue: 'NEURAL DOMAIN EXPLORER' })}</span>
                     </div>
-                    <h1 dangerouslySetInnerHTML={{ __html: t('domains.title') }}></h1>
+                    <h1>Orbit Your <span className="text-gradient">Career Future</span></h1>
                     <p>
-                        {t('domains.subtitle')}
+                        Navigate the complexity of global industrials with unified intelligence and high-resolution career mapping.
                     </p>
                 </Motion.div>
             </header>
 
-            {/* SEARCH BAR (No Filters) */}
-            <div className="filter-system-container">
-                <div className="search-bar-standalone">
-                    <div className="search-box-premium">
-                        <FaSearch className="search-icon" />
-                        <input
-                            type="text"
-                            placeholder={t('domains.searchPlaceholder')}
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                        />
+            {/* ELITE SEARCH EXPERIENCE */}
+            <div className="search-section-elite">
+                <div className="search-wrapper-elite">
+                    <FaSearch className="search-icon-elite" />
+                    <input
+                        type="text"
+                        placeholder={t('domains.searchPlaceholder', { defaultValue: 'Scan domains, roles or industries...' })}
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="search-input-elite"
+                    />
+                    <div className="filter-badge-elite">
+                        {selectedCategory}
                     </div>
                 </div>
             </div>
 
-            {/* DOMAIN CARDS GRID */}
-            <div className="domain-grid-premium">
+            {/* ELITE DOMAIN CARDS GRID */}
+            <div className="domains-elite-grid">
                 {filteredDomains.map((domain, index) => (
-                    <Motion.div
+                    <a
                         key={domain.id}
-                        initial={{ opacity: 0, y: 30 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: index * 0.05 }}
-                        whileHover={{ y: -6 }}
-                        className="domain-card-elite"
+                        href={`/domains/${domain.id}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{ textDecoration: 'none' }}
                     >
-                        <div className="card-gradient-border" />
-                        <div className="card-top-content">
-                            <div className="domain-icon-wrapper">
-                                {iconMap[domain.icon] || <FaBriefcase />}
+                        <Motion.div
+                            initial={{ opacity: 0, y: 40 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: index * 0.05 }}
+                            className="domain-card-elite"
+                        >
+                            <div className="card-shine" />
+                            <div className="card-top-row">
+                                <div className="domain-icon-wrapper">
+                                    {iconMap[domain.icon] || <FaBriefcase />}
+                                </div>
+                                <div className="growth-badge-small" data-type={domain.growthLevel || 'High Demand'}>
+                                    <FaBolt className="bolt-icon" />
+                                    {t('domains.demand', { level: domain.growthLevel || 'High Demand', defaultValue: domain.growthLevel || 'High Demand' })}
+                                </div>
                             </div>
-                            <div className="growth-badge-small" data-type={domain.growthLevel || 'High Demand'}>
-                                <FaBolt className="bolt-icon" />
-                                {t('domains.demand', { level: domain.growthLevel || 'High Demand' })}
+
+                            <div className="card-main-content">
+                                <h3>{domain.name}</h3>
+                                <div className="domain-stats-row">
+                                    <div className="mini-stat">
+                                        <FaUsers size={12} />
+                                        <span>240+ Pathways</span>
+                                    </div>
+                                    <div className="mini-stat">
+                                        <FaStar size={12} />
+                                        <span>Top Choice</span>
+                                    </div>
+                                </div>
+                                <p className="impact-statement">
+                                    {t(`domains.impact.${domain.name.toLowerCase().includes('it') ? 'it' :
+                                        domain.name.toLowerCase().includes('gov') ? 'gov' :
+                                            domain.name.toLowerCase().includes('fin') || domain.name.toLowerCase().includes('comm') ? 'finance' :
+                                                domain.name.toLowerCase().includes('eng') ? 'core' :
+                                                    domain.name.toLowerCase().includes('art') ? 'arts' :
+                                                        domain.name.toLowerCase().includes('manag') ? 'management' : 'it'}`, { defaultValue: impactStatements[domain.name] || (domain.description ? domain.description.split('.')[0] + '.' : 'Explore high-growth career opportunities.') })}
+                                </p>
                             </div>
-                        </div>
 
-                        <div className="card-body-elite">
-                            <h3>{domain.name}</h3>
-                            <p className="impact-statement">
-                                {t(`domains.impact.${domain.name.toLowerCase().includes('it') ? 'it' :
-                                    domain.name.toLowerCase().includes('gov') ? 'gov' :
-                                        domain.name.toLowerCase().includes('fin') || domain.name.toLowerCase().includes('comm') ? 'finance' :
-                                            domain.name.toLowerCase().includes('eng') ? 'core' :
-                                                domain.name.toLowerCase().includes('art') ? 'arts' :
-                                                    domain.name.toLowerCase().includes('manag') ? 'management' : 'it'}`, { defaultValue: impactStatements[domain.name] || domain.description.split('.')[0] + '.' })}
-                            </p>
-                        </div>
-
-                        <div className="card-footer-elite">
-                            <Link to={`/domains/${domain.id}`} className="explore-link-minimal">
-                                <span>{t('domains.explorePathways')}</span>
-                                <FaArrowRight />
-                            </Link>
-                        </div>
-                    </Motion.div>
+                            <div className="card-bottom-row">
+                                <div className="explore-btn-elite">
+                                    <span>{t('domains.explorePathways', { defaultValue: 'DECODE PATHWAY' })}</span>
+                                    <FaArrowRight />
+                                </div>
+                            </div>
+                        </Motion.div>
+                    </a>
                 ))}
             </div>
 
@@ -211,126 +230,279 @@ const Domains = () => {
             </section>
 
             <style>{`
-                .domains-discovery-page {
+                .domains-elite-container {
+                    padding: 40px 60px 80px;
+                    max-width: 1600px;
+                    margin: 0 auto;
                     position: relative;
-                    padding: 20px 0 60px;
                     min-height: 100vh;
-                    z-index: 1;
-                }
-
-                .discovery-bg-elements { position: fixed; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; }
-                .discovery-blob { position: absolute; border-radius: 50%; filter: blur(100px); opacity: 0.1; }
-                .blob-1 { width: 500px; height: 500px; background: var(--primary); top: -100px; right: -100px; }
-                .blob-2 { width: 400px; height: 400px; background: var(--accent); bottom: -50px; left: -100px; }
-
-                /* HERO SECTION - MINIMAL */
-                .discovery-header-minimal {
-                    margin-bottom: 25px;
-                    padding: 0 0 5px; /* Removed top padding to move badge up */
-                }
-                .hero-inner-minimal { max-width: 1200px; padding: 0 40px; }
-                .hero-badge {
-                    display: inline-flex; align-items: center; gap: 8px;
-                    padding: 5px 12px; background: rgba(99, 102, 241, 0.1);
-                    border-radius: 100px; color: var(--primary); font-size: 0.8rem;
-                    font-weight: 700; margin-bottom: 12px;
-                    margin-top: -10px; /* Pulling badge up */
-                }
-                .discovery-header-minimal h1 { font-size: 2.8rem; font-weight: 800; letter-spacing: -0.03em; margin-bottom: 10px; }
-                .discovery-header-minimal p { 
-                    font-size: 1.1rem; color: var(--text-muted); line-height: 1.5;
-                    white-space: nowrap; /* Force single line */
-                    border-left: 2px solid var(--primary);
-                    padding-left: 15px;
-                    background: linear-gradient(90deg, rgba(99, 102, 241, 0.05), transparent);
-                    display: inline-block;
-                }
-
-                /* SEARCH BAR - STANDALONE */
-                .filter-system-container { margin-bottom: 25px; max-width: 1200px; margin-left: auto; margin-right: auto; padding: 0 20px; }
-                .search-bar-standalone {
-                    display: flex; align-items: center;
-                    background: var(--bg-glass); backdrop-filter: blur(20px);
-                    padding: 10px 20px; border-radius: 18px;
-                    border: 1px solid var(--border); box-shadow: var(--shadow);
-                    max-width: 550px;
-                }
-                .search-box-premium {
-                    flex: 1; display: flex; align-items: center; gap: 10px;
-                    padding: 2px 10px; background: transparent;
-                }
-                .search-box-premium input {
-                    background: transparent; border: none; color: var(--text-main);
-                    font-size: 1rem; width: 100%; outline: none;
-                    padding: 6px 0;
-                }
-                .search-icon { color: var(--primary); font-size: 1.1rem; }
-
-                /* GRID & CARDS */
-                .domain-grid-premium {
-                    display: grid;
-                    grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
-                    gap: 24px;
-                    margin-bottom: 60px;
-                    max-width: 1200px;
-                    margin-left: auto;
-                    margin-right: auto;
-                    padding: 0 20px;
-                }
-                .domain-card-elite {
-                    position: relative;
-                    background: var(--bg-glass); backdrop-filter: blur(30px);
-                    border: 1px solid var(--border); border-radius: 24px;
-                    padding: 30px; display: flex; flex-direction: column; gap: 20px;
-                    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
                     overflow: hidden;
                 }
-                .domain-card-elite:hover {
-                    box-shadow: 0 30px 60px -15px rgba(0,0,0,0.1);
+
+                .neural-background {
+                    position: fixed;
+                    inset: 0;
+                    z-index: -1;
+                    background: var(--bg-primary);
+                }
+
+                .dot-grid {
+                    position: absolute;
+                    inset: 0;
+                    background-image: radial-gradient(var(--border) 1px, transparent 1px);
+                    background-size: 30px 30px;
+                    opacity: 0.3;
+                }
+
+                .glow-sphere-primary {
+                    position: absolute;
+                    top: -10%;
+                    right: -10%;
+                    width: 60vw;
+                    height: 60vw;
+                    background: radial-gradient(circle, rgba(26, 50, 99, 0.08), transparent 70%);
+                    filter: blur(100px);
+                }
+
+                .glow-sphere-secondary {
+                    position: absolute;
+                    bottom: -10%;
+                    left: -10%;
+                    width: 50vw;
+                    height: 50vw;
+                    background: radial-gradient(circle, rgba(26, 50, 99, 0.05) 0%, transparent 70%);
+                    filter: blur(100px);
+                }
+
+                .domains-hero-elite {
+                    margin-bottom: 60px;
+                    text-align: center;
+                }
+
+                .hero-inner-elite {
+                    max-width: 800px;
+                    margin: 0 auto;
+                }
+
+                .hero-badge {
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 10px;
+                    padding: 10px 20px;
+                    background: rgba(26, 50, 99, 0.1);
+                    border: 1px solid rgba(26, 50, 99, 0.2);
+                    border-radius: 100px;
+                    color: var(--primary);
+                    font-size: 0.8rem;
+                    font-weight: 800;
+                    letter-spacing: 0.1em;
+                    margin-bottom: 32px;
+                }
+
+                .domains-hero-elite h1 {
+                    font-size: 4.5rem;
+                    font-weight: 950;
+                    letter-spacing: -0.05em;
+                    line-height: 1.1;
+                    margin-bottom: 24px;
+                    color: var(--text-main);
+                }
+
+                .text-gradient {
+                    color: var(--accent);
+                }
+
+                .domains-hero-elite p {
+                    font-size: 1.3rem;
+                    color: var(--text-muted);
+                    max-width: 600px;
+                    margin: 0 auto 48px;
+                    line-height: 1.6;
+                }
+
+                /* Elite Search Bar */
+                .search-section-elite {
+                    position: relative;
+                    max-width: 700px;
+                    margin: 0 auto 80px;
+                }
+
+                .search-wrapper-elite {
+                    position: relative;
+                    background: var(--bg-glass);
+                    backdrop-filter: blur(20px);
+                    border: 1px solid var(--border);
+                    border-radius: 24px;
+                    padding: 8px 12px;
+                    display: flex;
+                    align-items: center;
+                    gap: 16px;
+                    box-shadow: var(--shadow-elite);
+                    transition: border-color 0.3s, box-shadow 0.3s;
+                }
+
+                .search-wrapper-elite:focus-within {
                     border-color: var(--primary);
+                    box-shadow: 0 0 0 4px var(--primary-glow);
                 }
-                .card-gradient-border {
-                    position: absolute; top: 0; left: 0; width: 100%; height: 3px;
-                    background: linear-gradient(to right, var(--primary), var(--accent));
-                    opacity: 0.8;
+
+                .search-icon-elite {
+                    color: var(--text-muted);
+                    font-size: 1.2rem;
+                    margin-left: 12px;
                 }
-                .card-top-content { display: flex; justify-content: space-between; align-items: flex-start; }
+
+                .search-input-elite {
+                    flex: 1;
+                    background: transparent;
+                    border: none;
+                    color: var(--text-main);
+                    font-size: 1.1rem;
+                    padding: 12px 0;
+                    outline: none;
+                }
+
+                .filter-badge-elite {
+                    background: var(--bg-surface);
+                    color: var(--text-muted);
+                    padding: 8px 16px;
+                    border-radius: 12px;
+                    font-size: 0.8rem;
+                    font-weight: 700;
+                    border: 1px solid var(--border);
+                }
+
+                /* Elite Grid */
+                .domains-elite-grid {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+                    gap: 40px;
+                }
+
+                .domain-card-elite {
+                    background: var(--bg-glass);
+                    backdrop-filter: blur(40px);
+                    border: 1px solid var(--border);
+                    border-radius: 36px;
+                    padding: 40px;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 32px;
+                    text-decoration: none;
+                    position: relative;
+                    overflow: hidden;
+                    transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+                }
+
+                .domain-card-elite:hover {
+                    transform: translateY(-12px);
+                    border-color: var(--primary);
+                    box-shadow: 0 30px 60px -20px rgba(26, 50, 99, 0.3);
+                }
+
+                .card-shine {
+                    position: absolute;
+                    inset: 0;
+                    background: linear-gradient(135deg, rgba(255,255,255,0.05), transparent);
+                    opacity: 0;
+                    transition: opacity 0.5s;
+                }
+
+                .domain-card-elite:hover .card-shine {
+                    opacity: 1;
+                }
+
+                .card-top-row {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: flex-start;
+                }
+
                 .domain-icon-wrapper {
-                    width: 50px; height: 50px; border-radius: 16px;
-                    background: linear-gradient(135deg, var(--primary), var(--accent));
-                    display: flex; align-items: center; justify-content: center;
-                    color: white; font-size: 1.4rem; box-shadow: 0 10px 20px -5px var(--primary-glow);
+                    width: 70px;
+                    height: 70px;
+                    border-radius: 22px;
+                    background: var(--bg-surface);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 2rem;
+                    color: var(--primary);
+                    transition: all 0.5s;
                 }
+
+                .domain-card-elite:hover .domain-icon-wrapper {
+                    background: var(--primary);
+                    color: white;
+                    transform: scale(1.1) rotate(5deg);
+                }
+
                 .growth-badge-small {
-                    padding: 6px 12px; border-radius: 100px;
-                    font-size: 0.75rem; font-weight: 800; text-transform: uppercase;
-                    display: flex; align-items: center; gap: 6px;
+                    display: flex;
+                    align-items: center;
+                    gap: 6px;
+                    padding: 6px 14px;
+                    background: rgba(0,0,0,0.05);
+                    border-radius: 100px;
+                    font-size: 0.75rem;
+                    font-weight: 800;
+                    letter-spacing: 0.05em;
                 }
-                .growth-badge-small[data-type="High Demand"] { background: rgba(16, 185, 129, 0.1); color: #10b981; }
-                .growth-badge-small[data-type="Emerging"] { background: rgba(6, 182, 212, 0.1); color: #06b6d4; }
-                .growth-badge-small[data-type="Competitive"] { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
-                .growth-badge-small[data-type="Stable"] { background: rgba(99, 102, 241, 0.1); color: #6366f1; }
 
-                .card-body-elite h3 { font-size: 1.5rem; font-weight: 800; margin-bottom: 8px; letter-spacing: -0.02em; }
-                .impact-statement { font-size: 1.05rem; color: var(--text-muted); line-height: 1.5; font-weight: 500; }
+                .growth-badge-small[data-type='High Demand'] { color: #1A3263; background: rgba(26, 50, 99, 0.1); }
+                .growth-badge-small[data-type='Competitive'] { color: #f59e0b; background: rgba(245, 158, 11, 0.1); }
+                .growth-badge-small[data-type='Emerging'] { color: #06b6d4; background: rgba(6, 182, 212, 0.1); }
+                .growth-badge-small[data-type='Stable'] { color: #6366f1; background: rgba(99, 102, 241, 0.1); }
 
-                .card-footer-elite { margin-top: auto; padding-top: 10px; }
-                .explore-link-minimal {
-                    display: flex; align-items: center; gap: 10px;
-                    color: var(--primary); font-weight: 700; text-decoration: none;
-                    font-size: 0.95rem; transition: transform 0.3s;
+                .card-main-content h3 {
+                    font-size: 1.8rem;
+                    font-weight: 850;
+                    color: var(--text-main);
+                    margin-bottom: 12px;
+                    letter-spacing: -0.03em;
                 }
-                .explore-link-minimal:hover { transform: translateX(5px); }
 
-                /* STATS STRIP */
-                .premium-stats-strip { margin-top: 60px; padding: 40px; background: var(--bg-glass); border: 1px solid var(--border); border-radius: 40px; max-width: 1200px; margin-left: auto; margin-right: auto; padding: 40px 20px; }
-                .stats-grid-horizontal { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
-                .stat-card-minimal { display: flex; align-items: center; gap: 16px; padding: 10px; }
-                .stat-icon { font-size: 1.8rem; color: var(--text-low); opacity: 0.5; }
-                .stat-info h4 { font-size: 1.5rem; font-weight: 800; line-height: 1; }
-                .stat-info p { font-size: 0.85rem; font-weight: 600; color: var(--text-muted); margin-top: 4px; }
-                .stat-card-minimal.highlight .stat-icon { color: var(--primary); opacity: 1; }
-                .stat-card-minimal.highlight h4 { color: var(--primary); }
+                .domain-stats-row {
+                    display: flex;
+                    gap: 20px;
+                    margin-bottom: 24px;
+                }
+
+                .mini-stat {
+                    display: flex;
+                    align-items: center;
+                    gap: 6px;
+                    font-size: 0.85rem;
+                    font-weight: 600;
+                    color: var(--text-muted);
+                }
+
+                .impact-statement {
+                    padding: 16px;
+                    background: rgba(0,0,0,0.02);
+                    border-radius: 20px;
+                    font-size: 1rem;
+                    font-weight: 500;
+                    line-height: 1.5;
+                    color: var(--text-muted);
+                    border-left: 3px solid var(--primary);
+                }
+
+                .card-bottom-row {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    margin-top: auto;
+                }
+
+                .explore-btn-elite {
+                    font-size: 0.9rem;
+                    font-weight: 800;
+                    color: var(--primary);
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                }
 
                 .discovery-loader { min-height: 400px; display: flex; align-items: center; justify-content: center; }
                 .loader-spinner { width: 50px; height: 50px; border: 4px solid var(--border); border-top-color: var(--primary); border-radius: 50%; }

@@ -66,8 +66,8 @@ const InterviewFeedback = ({ results, onRestart }) => {
                         </div>
                     </div>
 
-                    <div className="analysis-card" style={{ marginTop: '2rem', background: 'rgba(16, 185, 129, 0.05)', borderColor: 'rgba(16, 185, 129, 0.2)' }}>
-                        <h3 style={{ color: '#10b981' }}><FaCheckCircle /> {t('interview.keyStrengths')}</h3>
+                    <div className="analysis-card" style={{ marginTop: '2rem', background: 'rgba(26, 50, 99, 0.05)', borderColor: 'rgba(26, 50, 99, 0.2)' }}>
+                        <h3 style={{ color: '#1A3263' }}><FaCheckCircle /> {t('interview.keyStrengths')}</h3>
                         <ul className="analysis-list">
                             {results.strengths.map((s, i) => <li key={i}>{s}</li>)}
                         </ul>

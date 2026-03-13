@@ -47,7 +47,7 @@ const MasteryRing = ({ pct = 0, size = 50, color = '#6366f1', stroke = 5 }) => {
 
 // ─── Difficulty Button Config ──────────────────────────────────────────────────
 const DIFFICULTIES = [
-    { id: 'Easy', label: 'Easy', icon: '🟢', desc: '10 questions • Foundational', color: '#10b981', count: 10 },
+    { id: 'Easy', label: 'Easy', icon: '🟢', desc: '10 questions • Foundational', color: '#1A3263', count: 10 },
     { id: 'Medium', label: 'Medium', icon: '🟡', desc: '15 questions • Core skills', color: '#f59e0b', count: 15 },
     { id: 'Hard', label: 'Hard', icon: '🔴', desc: '15 questions • Expert level', color: '#ef4444', count: 15 },
     { id: 'Company', label: 'Company Level', icon: '🏢', desc: '20 questions • Interview-style', color: '#6366f1', count: 20 },
@@ -213,7 +213,7 @@ export const PracticeEngine = ({ onStartTest }) => {
                                             const tp = getTopicProgress(progress, cat.key, t);
                                             return li === 0 ? tp.easyCompleted : li === 1 ? tp.mediumCompleted : tp.hardCompleted;
                                         }).length;
-                                        const dotColor = li === 0 ? '#10b981' : li === 1 ? '#f59e0b' : '#ef4444';
+                                        const dotColor = li === 0 ? '#1A3263' : li === 1 ? '#f59e0b' : '#ef4444';
                                         return (
                                             <div key={level} style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
                                                 <div style={{ width: 8, height: 8, borderRadius: '50%', background: doneCount > 0 ? dotColor : 'var(--border)' }} />
@@ -278,7 +278,7 @@ export const PracticeEngine = ({ onStartTest }) => {
 
                             <div style={{ display: 'flex', gap: 6, marginBottom: '0.85rem' }}>
                                 {[
-                                    { label: 'E', done: tp.easyCompleted, color: '#10b981' },
+                                    { label: 'E', done: tp.easyCompleted, color: '#1A3263' },
                                     { label: 'M', done: tp.mediumCompleted, color: '#f59e0b' },
                                     { label: 'H', done: tp.hardCompleted, color: '#ef4444' },
                                 ].map(({ label, done, color }) => (
@@ -337,7 +337,7 @@ export const PracticeEngine = ({ onStartTest }) => {
                         </p>
                         <div style={{ display: 'flex', gap: 8 }}>
                             {[
-                                { label: 'Easy', done: topicProg.easyCompleted, color: '#10b981' },
+                                { label: 'Easy', done: topicProg.easyCompleted, color: '#1A3263' },
                                 { label: 'Medium', done: topicProg.mediumCompleted, color: '#f59e0b', locked: !topicProg.easyCompleted },
                                 { label: 'Hard', done: topicProg.hardCompleted, color: '#ef4444', locked: !topicProg.mediumCompleted },
                             ].map(({ label, done, color, locked }) => (

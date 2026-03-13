@@ -1514,17 +1514,17 @@ const RoleAccess = () => {
                 .rm-platform-tag { font-size: 0.65rem; font-weight: 800; padding: 2px 6px; border-radius: 4px; background: rgba(99, 102, 241, 0.1); color: #6366f1; border: 1px solid rgba(99, 102, 241, 0.1); }
                 .rm-portfolio-tag { font-size: 0.65rem; font-weight: 800; padding: 2px 6px; border-radius: 4px; }
                 .rm-portfolio-tag.pv-low { background: rgba(100, 116, 139, 0.1); color: #64748b; }
-                .rm-portfolio-tag.pv-medium { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+                .rm-portfolio-tag.pv-medium { background: rgba(26, 50, 99, 0.1); color: #1A3263; }
                 .rm-portfolio-tag.pv-high { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
                 .rm-portfolio-tag.pv-very-high { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
                 .rm-portfolio-tag.pv-essential { background: rgba(139, 92, 246, 0.1); color: #8b5cf6; }
                 
                 .rm-item-meta { display: flex; gap: 12px; font-size: 0.75rem; color: var(--text-muted); font-weight: 500; }
                 
-                .rm-internship-block { background: rgba(16, 185, 129, 0.05); padding: 1.25rem; border-radius: 12px; border: 1px dashed #10b981; }
+                .rm-internship-block { background: rgba(26, 50, 99, 0.05); padding: 1.25rem; border-radius: 12px; border: 1px dashed #1A3263; }
                 .rm-intern-content { font-size: 0.9rem; color: var(--text-main); line-height: 1.6; }
                 .rm-intern-row { margin-bottom: 4px; }
-                .rm-intern-row strong { font-weight: 700; color: #10b981; margin-right: 6px; }
+                .rm-intern-row strong { font-weight: 700; color: #1A3263; margin-right: 6px; }
                 
                 .roadmap-skeleton { display: flex; flex-direction: column; gap: 1rem; }
                 .skeleton-phase { height: 80px; border-radius: 16px; }
@@ -1603,10 +1603,10 @@ const RoleAccess = () => {
                 
                 .c-content, .p-content { padding: 1.25rem; flex: 1; display: flex; flex-direction: column; }
                 .c-label-row, .p-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; }
-                .free-badge { background: #10b981; color: white; font-size: 0.65rem; font-weight: 800; padding: 2px 8px; border-radius: 4px; }
+                .free-badge { background: #1A3263; color: white; font-size: 0.65rem; font-weight: 800; padding: 2px 8px; border-radius: 4px; }
                 
                 .diff-tag { font-size: 0.7rem; font-weight: 700; padding: 3px 10px; border-radius: 6px; text-transform: uppercase; }
-                .diff-tag.Beginner { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+                .diff-tag.Beginner { background: rgba(26, 50, 99, 0.1); color: #1A3263; }
                 .diff-tag.Intermediate { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
                 .diff-tag.Advanced { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
                 
@@ -1752,7 +1752,7 @@ const RoleAccess = () => {
                 .j-main h4 { margin: 0 0 4px 0; font-size: 1.1rem; }
                 .j-main p { margin: 0; color: var(--text-muted); font-size: 0.9rem; }
                 .j-side { display: flex; align-items: center; gap: 2rem; }
-                .j-salary { font-weight: 700; color: #10b981; font-size: 1.05rem; }
+                .j-salary { font-weight: 700; color: #1A3263; font-size: 1.05rem; }
                 .apply-btn {
                     padding: 10px 20px; background: var(--primary); color: white;
                     border-radius: 10px; text-decoration: none; font-weight: 700; font-size: 0.9rem;
@@ -1827,7 +1827,7 @@ const RoleAccess = () => {
                 }
                 .p-m-label { font-size: 0.65rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
                 .p-m-value { font-size: 1.4rem; font-weight: 800; color: var(--text-main); }
-                .p-m-detail { font-size: 0.8rem; color: #10b981; font-weight: 600; }
+                .p-m-detail { font-size: 0.8rem; color: #1A3263; font-weight: 600; }
 
                 .premium-section-title {
                     margin: 2.5rem 0 1.5rem 0;
@@ -1968,7 +1968,7 @@ const RoleAccess = () => {
                     border-color: rgba(99, 102, 241, 0.2);
                     transform: translateY(-2px);
                 }
-                .industry-item-exec svg { color: #10b981; }
+                .industry-item-exec svg { color: #1A3263; }
 
                 .premium-outlook-card {
                     padding: 2rem;
@@ -2056,7 +2056,7 @@ const RoleAccess = () => {
                 }
                 .step-salary {
                     font-size: 0.9rem;
-                    color: #10b981;
+                    color: #1A3263;
                     font-weight: 500;
                 }
 
@@ -2211,7 +2211,7 @@ const RoleAccess = () => {
                     gap: 6px;
                 }
 
-                .premium-badge.efficiency { color: #22c55e; background: rgba(34, 197, 94, 0.1); border-color: rgba(34, 197, 94, 0.1); }
+                .premium-badge.efficiency { color: #1A3263; background: rgba(26, 50, 99, 0.1); border-color: rgba(26, 50, 99, 0.1); }
                 .premium-badge.coverage { color: #6366f1; background: rgba(99, 102, 241, 0.1); border-color: rgba(99, 102, 241, 0.1); }
                 .premium-badge.alignment { color: #8b5cf6; background: rgba(139, 92, 246, 0.1); border-color: rgba(139, 92, 246, 0.1); }
 

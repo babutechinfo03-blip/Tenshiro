@@ -6,6 +6,9 @@ const userController = require('../controllers/userController');
 const dataController = require('../controllers/dataController');
 const aiController = require('../controllers/aiController');
 const interviewController = require('../controllers/interviewController');
+const assistantController = require('../controllers/assistantController');
+const communicationController = require('../controllers/communicationController');
+const scheduleController = require('../controllers/scheduleController');
 
 // Auth Routes
 router.post('/auth/register', userController.register);
@@ -60,5 +63,32 @@ router.post('/interview/generate', auth, interviewController.generateQuestions);
 router.post('/interview/analyze', auth, interviewController.analyzeInterview);
 router.post('/interview/prep-data', auth, interviewController.getPrepData);
 router.get('/interview/history', auth, interviewController.getHistory);
+
+// Communication Intelligence Content Routes
+router.get('/comm/grammar', auth, communicationController.getGrammarTopics);
+router.get('/comm/quizzes', auth, communicationController.getGrammarQuizzes);
+router.get('/comm/courses', auth, communicationController.getCourses);
+router.get('/comm/videos', auth, communicationController.getVideos);
+router.get('/comm/resources', auth, communicationController.getResources);
+router.get('/comm/pdfs', auth, communicationController.getPdfs);
+router.post('/comm/analyze-speech', auth, communicationController.analyzeSpeech);
+router.post('/comm/ai-chat', auth, communicationController.handleAiChat);
+router.get('/comm/topic-quiz', auth, communicationController.getTopicQuiz);
+
+// Schedule Routes
+router.get('/schedules', auth, scheduleController.getSchedules);
+router.post('/schedules', auth, scheduleController.addSchedule);
+router.delete('/schedules/:id', auth, scheduleController.deleteSchedule);
+router.put('/schedules/:id/toggle', auth, scheduleController.toggleCompletion);
+
+// Enhanced AI features
+router.post('/ai/save-roadmap', auth, aiController.saveUserRoadmap);
+router.get('/ai/my-roadmaps', auth, aiController.getUserRoadmaps);
+
+// PathPilot AI — Primary unified endpoint (no auth — accessible to all users)
+router.post('/pathpilot-ai', assistantController.pathpilotChat);
+
+// Legacy endpoint (backward compat)
+router.post('/assistant', assistantController.chat);
 
 module.exports = router;

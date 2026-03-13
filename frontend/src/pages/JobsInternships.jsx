@@ -1,15 +1,131 @@
 import { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import axios from 'axios';
 import {
     FaBriefcase, FaMapMarkerAlt, FaMoneyBillWave, FaExternalLinkAlt,
     FaBookmark, FaCheck, FaTimes, FaClock, FaUserTie, FaFilter,
-    FaLayerGroup, FaBolt, FaMagic, FaChartLine
+    FaLayerGroup, FaBolt, FaMagic, FaChartLine, FaUserGraduate
 } from 'react-icons/fa';
 import { motion as Motion, AnimatePresence } from 'framer-motion';
 import { useLanguage } from '../context/LanguageContext';
 
+const OpportunityCard = ({ job, index, onTrack, onUntrack, isTracked, t }) => (
+    <Motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: index * 0.05 }}
+        whileHover={{ y: -6 }}
+        className="opportunity-card-elite"
+    >
+        <div className="card-header-elite">
+            <span className={`type-badge-premium ${job.type}`}>
+                {job.type}
+            </span>
+            {isTracked && <div className="tracked-label" style={{ color: 'var(--primary)', fontWeight: 800, fontSize: '0.7rem' }}>{t('jobs.tracked')}</div>}
+        </div>
+
+        <div className="card-title-elite">
+            <h3>{job.title}</h3>
+            <span className="company-name">{job.company}</span>
+        </div>
+
+        <div className="metadata-strip-elite">
+            <div className="meta-item">
+                <FaMapMarkerAlt className="meta-icon" />
+                <span>{job.location}</span>
+            </div>
+            <div className="meta-item">
+                <FaMoneyBillWave className="meta-icon" />
+                <span>{job.salary_range}</span>
+            </div>
+        </div>
+
+        <div className="action-footer-elite">
+            <a href={job.portal_link} target="_blank" rel="noopener noreferrer" className="btn-elite-outline">
+                <FaExternalLinkAlt /> {t('jobs.applyNow')}
+            </a>
+            {isTracked ? (
+                <button
+                    onClick={() => onUntrack(job.id)}
+                    className="btn-elite-outline"
+                    style={{ borderColor: 'var(--primary)', color: 'var(--primary)', cursor: 'pointer' }}
+                    title="Click to Unsave"
+                >
+                    <FaCheck /> {t('jobs.saved')}
+                </button>
+            ) : (
+                <button onClick={() => onTrack(job.id)} className="btn-elite-primary">
+                    <FaBookmark /> {t('jobs.save')}
+                </button>
+            )}
+        </div>
+    </Motion.div>
+);
+
+const ApplicationEliteCard = ({ application, index, onUpdateStage, stages, getStageColor, t }) => (
+    <Motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ delay: index * 0.05 }}
+        className="opportunity-card-elite"
+        style={{ borderTop: `4px solid ${getStageColor(application.stage)}` }}
+    >
+        <div className="card-header-elite">
+            <span className={`type-badge-premium ${application.type}`}>
+                {application.type}
+            </span>
+        </div>
+
+        <div className="card-title-elite">
+            <h3>{application.title}</h3>
+            <span className="company-name">{application.company}</span>
+        </div>
+
+        <div className="metadata-strip-elite">
+            <div className="meta-item">
+                <FaMapMarkerAlt className="meta-icon" />
+                <span>{application.location}</span>
+            </div>
+            <div className="meta-item">
+                <FaMoneyBillWave className="meta-icon" />
+                <span>{application.salary_range}</span>
+            </div>
+        </div>
+
+        <div className="pipeline-stage-control" style={{ marginTop: '10px' }}>
+            <label style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--text-low)', display: 'block', marginBottom: '8px', textTransform: 'uppercase' }}>
+                {t('jobs.pipelineStage')}
+            </label>
+            <div className="elite-action-row" style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+                <div className="elite-select-wrapper" style={{ flex: 1, position: 'relative' }}>
+                    <select
+                        value={application.stage}
+                        onChange={(e) => onUpdateStage(application.id, e.target.value)}
+                        style={{
+                            width: '100%', padding: '12px', borderRadius: '14px',
+                            background: 'rgba(0,0,0,0.03)', border: `1.5px solid ${getStageColor(application.stage)}`,
+                            color: getStageColor(application.stage), fontWeight: 700,
+                            cursor: 'pointer', outline: 'none'
+                        }}
+                    >
+                        {stages.filter(s => s.value !== 'all').map(s => (
+                            <option key={s.value} value={s.value}>{s.label}</option>
+                        ))}
+                    </select>
+                </div>
+                <a href={application.portal_link} target="_blank" rel="noopener noreferrer" className="btn-elite-outline" style={{ flex: 1, padding: '12px' }}>
+                    <FaExternalLinkAlt /> {t('jobs.applyNow')}
+                </a>
+            </div>
+        </div>
+    </Motion.div>
+);
+
 const JobsInternships = () => {
     const { t } = useLanguage();
+    const [searchParams] = useSearchParams();
+    const typeFilter = searchParams.get('type'); // 'internship' or 'job'
+
     const [allJobs, setAllJobs] = useState([]);
     const [applications, setApplications] = useState([]);
     const [selectedRole, setSelectedRole] = useState('all');
@@ -118,12 +234,19 @@ const JobsInternships = () => {
                     className="hero-inner-minimal"
                 >
                     <div className="hero-badge">
-                        <FaChartLine />
-                        <span>{t('jobs.badge')}</span>
+                        {typeFilter === 'internship' ? <FaUserGraduate /> : <FaBriefcase />}
+                        <span>{typeFilter === 'internship' ? 'Internships Lab' : typeFilter === 'job' ? 'Full-Time Jobs' : t('jobs.badge')}</span>
                     </div>
-                    <h1 dangerouslySetInnerHTML={{ __html: t('jobs.title') }}></h1>
+                    <h1 dangerouslySetInnerHTML={{
+                        __html:
+                            typeFilter === 'internship' ? 'Discover Your Next <span class="text-gradient">Elite Internship</span>' :
+                                typeFilter === 'job' ? 'Launch Your <span class="text-gradient">Full-Time Career</span>' :
+                                    t('jobs.title')
+                    }}></h1>
                     <p>
-                        {t('jobs.subtitle')}
+                        {typeFilter === 'internship' ? 'Find high-impact internships to build your professional foundation and skills.' :
+                            typeFilter === 'job' ? 'Connect with global opportunities that match your expertise and ambitions.' :
+                                t('jobs.subtitle')}
                     </p>
                 </Motion.div>
             </header>
@@ -173,50 +296,57 @@ const JobsInternships = () => {
                     {selectedStage === 'all' ? (
                         <div className="opportunities-discovery">
                             <h2 className="section-title-elite">{t('jobs.available')}</h2>
-                            <div className="discovery-dual-grid">
+                            <div className="discovery-dual-grid" style={{
+                                gridTemplateColumns: (!typeFilter || typeFilter === 'all') ? '1fr 1fr' : '1fr',
+                                maxWidth: (!typeFilter || typeFilter === 'all') ? '1200px' : '1400px'
+                            }}>
                                 {/* INTERNSHIPS COLUMN */}
-                                <div className="discovery-column">
-                                    <h3 className="column-header">
-                                        <FaBolt className="header-icon internship" />
-                                        {t('jobs.internships')}
-                                        <span className="count-pill">{filteredJobs.filter(job => job.type === 'internship').length}</span>
-                                    </h3>
-                                    <div className="opportunities-stack">
-                                        {filteredJobs.filter(job => job.type === 'internship').map((job, idx) => (
-                                            <OpportunityCard
-                                                key={job.id}
-                                                job={job}
-                                                index={idx}
-                                                onTrack={trackApplication}
-                                                onUntrack={untrackApplication}
-                                                isTracked={applications.some(a => a.job_id === job.id)}
-                                                t={t}
-                                            />
-                                        ))}
+                                {(!typeFilter || typeFilter === 'internship' || typeFilter === 'all') && (
+                                    <div className="discovery-column">
+                                        <h3 className="column-header">
+                                            <FaBolt className="header-icon internship" />
+                                            {t('jobs.internships')}
+                                            <span className="count-pill">{filteredJobs.filter(job => job.type === 'internship').length}</span>
+                                        </h3>
+                                        <div className="opportunities-stack">
+                                            {filteredJobs.filter(job => job.type === 'internship').map((job, idx) => (
+                                                <OpportunityCard
+                                                    key={job.id}
+                                                    job={job}
+                                                    index={idx}
+                                                    onTrack={trackApplication}
+                                                    onUntrack={untrackApplication}
+                                                    isTracked={applications.some(a => a.job_id === job.id)}
+                                                    t={t}
+                                                />
+                                            ))}
+                                        </div>
                                     </div>
-                                </div>
+                                )}
 
                                 {/* JOBS COLUMN */}
-                                <div className="discovery-column">
-                                    <h3 className="column-header">
-                                        <FaBriefcase className="header-icon job" />
-                                        {t('jobs.fullTime')}
-                                        <span className="count-pill">{filteredJobs.filter(job => job.type === 'job').length}</span>
-                                    </h3>
-                                    <div className="opportunities-stack">
-                                        {filteredJobs.filter(job => job.type === 'job').map((job, idx) => (
-                                            <OpportunityCard
-                                                key={job.id}
-                                                job={job}
-                                                index={idx}
-                                                onTrack={trackApplication}
-                                                onUntrack={untrackApplication}
-                                                isTracked={applications.some(a => a.job_id === job.id)}
-                                                t={t}
-                                            />
-                                        ))}
+                                {(!typeFilter || typeFilter === 'job' || typeFilter === 'all') && (
+                                    <div className="discovery-column">
+                                        <h3 className="column-header">
+                                            <FaBriefcase className="header-icon job" />
+                                            {t('jobs.fullTime')}
+                                            <span className="count-pill">{filteredJobs.filter(job => job.type === 'job').length}</span>
+                                        </h3>
+                                        <div className="opportunities-stack">
+                                            {filteredJobs.filter(job => job.type === 'job').map((job, idx) => (
+                                                <OpportunityCard
+                                                    key={job.id}
+                                                    job={job}
+                                                    index={idx}
+                                                    onTrack={trackApplication}
+                                                    onUntrack={untrackApplication}
+                                                    isTracked={applications.some(a => a.job_id === job.id)}
+                                                    t={t}
+                                                />
+                                            ))}
+                                        </div>
                                     </div>
-                                </div>
+                                )}
                             </div>
                         </div>
                     ) : (
@@ -326,6 +456,30 @@ const JobsInternships = () => {
                     display: grid; grid-template-columns: 1fr 1fr; gap: 24px;
                     max-width: 1200px; margin: 0 auto; padding: 0 20px;
                 }
+                
+                /* When filtered to a single type, use a fixed 4-column grid */
+                .discovery-dual-grid:not([style*="1fr 1fr"]) .opportunities-stack {
+                    display: grid;
+                    grid-template-columns: repeat(4, 1fr);
+                    gap: 16px;
+                }
+
+                @media (max-width: 1400px) {
+                    .discovery-dual-grid:not([style*="1fr 1fr"]) .opportunities-stack {
+                         grid-template-columns: repeat(3, 1fr);
+                    }
+                }
+                @media (max-width: 1100px) {
+                    .discovery-dual-grid:not([style*="1fr 1fr"]) .opportunities-stack {
+                         grid-template-columns: repeat(2, 1fr);
+                    }
+                }
+                @media (max-width: 768px) {
+                    .discovery-dual-grid:not([style*="1fr 1fr"]) .opportunities-stack {
+                         grid-template-columns: 1fr;
+                    }
+                }
+
                 .discovery-column { display: flex; flex-direction: column; gap: 20px; }
                 .column-header {
                     font-size: 1.25rem; font-weight: 800; display: flex; align-items: center; gap: 10px;
@@ -417,116 +571,5 @@ const JobsInternships = () => {
         </div>
     );
 };
-
-const OpportunityCard = ({ job, index, onTrack, onUntrack, isTracked, t }) => (
-    <Motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: index * 0.05 }}
-        className="opportunity-card-elite"
-    >
-        <div className="card-header-elite">
-            <span className={`type-badge-premium ${job.type}`}>
-                {job.type}
-            </span>
-            {isTracked && <div className="tracked-label" style={{ color: 'var(--primary)', fontWeight: 800, fontSize: '0.7rem' }}>{t('jobs.tracked')}</div>}
-        </div>
-
-        <div className="card-title-elite">
-            <h3>{job.title}</h3>
-            <span className="company-name">{job.company}</span>
-        </div>
-
-        <div className="metadata-strip-elite">
-            <div className="meta-item">
-                <FaMapMarkerAlt className="meta-icon" />
-                <span>{job.location}</span>
-            </div>
-            <div className="meta-item">
-                <FaMoneyBillWave className="meta-icon" />
-                <span>{job.salary_range}</span>
-            </div>
-        </div>
-
-        <div className="action-footer-elite">
-            <a href={job.portal_link} target="_blank" rel="noopener noreferrer" className="btn-elite-outline">
-                <FaExternalLinkAlt /> {t('jobs.applyNow')}
-            </a>
-            {isTracked ? (
-                <button
-                    onClick={() => onUntrack(job.id)}
-                    className="btn-elite-outline"
-                    style={{ borderColor: 'var(--primary)', color: 'var(--primary)', cursor: 'pointer' }}
-                    title="Click to Unsave"
-                >
-                    <FaCheck /> {t('jobs.saved')}
-                </button>
-            ) : (
-                <button onClick={() => onTrack(job.id)} className="btn-elite-primary">
-                    <FaBookmark /> {t('jobs.save')}
-                </button>
-            )}
-        </div>
-    </Motion.div>
-);
-
-const ApplicationEliteCard = ({ application, index, onUpdateStage, stages, getStageColor, t }) => (
-    <Motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ delay: index * 0.05 }}
-        className="opportunity-card-elite"
-        style={{ borderTop: `4px solid ${getStageColor(application.stage)}` }}
-    >
-        <div className="card-header-elite">
-            <span className={`type-badge-premium ${application.type}`}>
-                {application.type}
-            </span>
-        </div>
-
-        <div className="card-title-elite">
-            <h3>{application.title}</h3>
-            <span className="company-name">{application.company}</span>
-        </div>
-
-        <div className="metadata-strip-elite">
-            <div className="meta-item">
-                <FaMapMarkerAlt className="meta-icon" />
-                <span>{application.location}</span>
-            </div>
-            <div className="meta-item">
-                <FaMoneyBillWave className="meta-icon" />
-                <span>{application.salary_range}</span>
-            </div>
-        </div>
-
-        <div className="pipeline-stage-control" style={{ marginTop: '10px' }}>
-            <label style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--text-low)', display: 'block', marginBottom: '8px', textTransform: 'uppercase' }}>
-                {t('jobs.pipelineStage')}
-            </label>
-            <div className="elite-action-row" style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-                <div className="elite-select-wrapper" style={{ flex: 1, position: 'relative' }}>
-                    <select
-                        value={application.stage}
-                        onChange={(e) => onUpdateStage(application.id, e.target.value)}
-                        style={{
-                            width: '100%', padding: '12px', borderRadius: '14px',
-                            background: 'rgba(0,0,0,0.03)', border: `1.5px solid ${getStageColor(application.stage)}`,
-                            color: getStageColor(application.stage), fontWeight: 700,
-                            cursor: 'pointer', outline: 'none'
-                        }}
-                    >
-                        {stages.filter(s => s.value !== 'all').map(s => (
-                            <option key={s.value} value={s.value}>{s.label}</option>
-                        ))}
-                    </select>
-                </div>
-                <a href={application.portal_link} target="_blank" rel="noopener noreferrer" className="btn-elite-outline" style={{ flex: 1, padding: '12px' }}>
-                    <FaExternalLinkAlt /> {t('jobs.applyNow')}
-                </a>
-            </div>
-        </div>
-    </Motion.div>
-);
 
 export default JobsInternships;

@@ -59,7 +59,7 @@ const DomainRoles = () => {
                             <h3>{role.title}</h3>
                             <span style={{
                                 padding: '0.25rem 0.75rem', borderRadius: '20px', fontSize: '0.8rem',
-                                background: role.demand_indicator === 'High' ? 'rgba(16, 185, 129, 0.1)' : 'rgba(255, 193, 7, 0.1)',
+                                background: role.demand_indicator === 'High' ? 'rgba(26, 50, 99, 0.1)' : 'rgba(255, 193, 7, 0.1)',
                                 color: role.demand_indicator === 'High' ? 'var(--success)' : 'var(--warning)'
                             }}>
                                 {t('domains.demand', { level: role.demand_indicator })}

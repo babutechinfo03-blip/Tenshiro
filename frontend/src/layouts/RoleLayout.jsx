@@ -1,6 +1,6 @@
 import { Outlet } from 'react-router-dom';
 import Navbar from '../components/Navbar';
-import ChatBotEnhanced from '../components/ChatBotEnhanced';
+
 
 const RoleLayout = () => {
     return (

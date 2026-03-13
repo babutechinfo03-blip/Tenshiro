@@ -240,7 +240,7 @@ const ResumeEngine = () => {
                                             <div style={{ fontWeight: 800, fontSize: '1.1rem', color: 'var(--text-main)', marginBottom: 12 }}>{template.name}</div>
 
                                             <div style={{ marginTop: 'auto', display: 'flex', alignItems: 'center', gap: 8, fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-                                                <FiCheckCircle style={{ color: '#10b981' }} /> {t('resume.fullyEditable')}
+                                                <FiCheckCircle style={{ color: '#1A3263' }} /> {t('resume.fullyEditable')}
                                             </div>
                                         </div>
                                     </motion.div>

@@ -133,7 +133,7 @@ const S = `
     min-height:60vh; text-align:center; padding:3rem; color: var(--text-main); }
 
   /* live dot */
-  .live-dot { width:7px; height:7px; border-radius:50%; background:#10b981; display:inline-block; margin-right:4px; }
+  .live-dot { width:7px; height:7px; border-radius:50%; background:#1A3263; display:inline-block; margin-right:4px; }
 `;
 
 /* ─── helpers ─────────────────────────────────────────────── */
@@ -283,7 +283,7 @@ const AptLearnMode = ({ onStartPractice }) => {
                                     fontWeight: selTopic === t ? 700 : 500,
                                 }}>
                                 <span>{completed.has(t) ? '✅' : '📄'} {t}</span>
-                                {completed.has(t) && <span style={{ fontSize: '.65rem', color: '#10b981', fontWeight: 800 }}>Done</span>}
+                                {completed.has(t) && <span style={{ fontSize: '.65rem', color: '#1A3263', fontWeight: 800 }}>Done</span>}
                             </button>
                         ))}
                     </div>
@@ -316,8 +316,8 @@ const AptLearnMode = ({ onStartPractice }) => {
                                         <div style={{ display: 'flex', gap: '.5rem', flexWrap: 'wrap', marginBottom: '.75rem' }}>
                                             <C_TAG color={cat.color}>{cat.icon} {cat.label}</C_TAG>
                                             <C_TAG color="#0ea5e9">{content.overview.difficulty}</C_TAG>
-                                            <C_TAG color="#10b981">Weightage: {content.overview.weightage}</C_TAG>
-                                            {completed.has(selTopic) && <C_TAG color="#10b981">✅ Completed</C_TAG>}
+                                            <C_TAG color="#1A3263">Weightage: {content.overview.weightage}</C_TAG>
+                                            {completed.has(selTopic) && <C_TAG color="#1A3263">✅ Completed</C_TAG>}
                                         </div>
                                         <h1 className="lm-hero" style={{ padding: 0, border: 'none', fontSize: '1.9rem', fontWeight: 900, color: '#0f172a', margin: 0 }}>{selTopic}</h1>
                                         <p style={{ margin: '.5rem 0 0', color: '#64748b', fontSize: '.92rem', lineHeight: 1.6, maxWidth: 640 }}>{content.overview.description}</p>

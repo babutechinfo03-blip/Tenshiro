@@ -98,7 +98,7 @@ const AptResourceHub = ({ bookmarks, onBookmark }) => {
                             {['Formula cheat sheet', 'Last 10 year PYQs', 'Fast Math shortcuts'].map((t, i) => (
                                 <div key={i} style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
                                     <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'var(--bg-card)', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1rem' }}>📈</div>
-                                    <div style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-main)' }}>{t} <span style={{ color: '#10b981', marginLeft: 5 }}>↓</span></div>
+                                    <div style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-main)' }}>{t} <span style={{ color: '#1A3263', marginLeft: 5 }}>↓</span></div>
                                 </div>
                             ))}
                         </div>

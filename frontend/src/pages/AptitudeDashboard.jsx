@@ -183,7 +183,7 @@ const AptitudeDashboard = () => {
                         <div style={{ display: 'flex', alignItems: 'center', gap: 15 }}>
                             <div style={{ textAlign: 'right' }}>
                                 <div style={{ fontSize: '0.7rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase' }}>{t('aptitude.readinessScore')}</div>
-                                <div style={{ fontSize: '1.1rem', fontWeight: 900, color: '#10b981' }}>{readiness}%</div>
+                                <div style={{ fontSize: '1.1rem', fontWeight: 900, color: '#1A3263' }}>{readiness}%</div>
                             </div>
                             <button onClick={() => { localStorage.removeItem('apt_goal'); setGoal(null); }} style={{ padding: '0.5rem 1rem', borderRadius: 10, border: '1px solid var(--border)', background: 'var(--bg-secondary)', color: 'var(--text-muted)', fontWeight: 700, fontSize: '0.75rem', cursor: 'pointer' }}>{t('aptitude.switchTrack')}</button>
                         </div>

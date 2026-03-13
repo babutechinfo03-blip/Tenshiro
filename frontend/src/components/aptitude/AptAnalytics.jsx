@@ -110,9 +110,9 @@ const AptAnalytics = ({ result, history, radarData, onRetry, onBack }) => {
                     <div style={{ fontSize: '2.5rem', fontWeight: 900, color: '#6366f1' }}>{Math.max(0, pct - 5)}%</div>
                     <div style={{ fontSize: '0.8rem', color: '#94a3b8', marginTop: '0.4rem' }}>Target: TCS, Infosys, Zoho</div>
                 </div>
-                <div style={{ background: 'linear-gradient(135deg, #0f172a, #1e293b)', border: '1px solid #10b98150', borderRadius: 24, padding: '1.5rem', textAlign: 'center' }}>
+                <div style={{ background: 'linear-gradient(135deg, #0f172a, #1e293b)', border: '1px solid #1A326350', borderRadius: 24, padding: '1.5rem', textAlign: 'center' }}>
                     <div style={{ fontSize: '0.7rem', fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase', marginBottom: '0.8rem' }}>Govt Exam Readiness</div>
-                    <div style={{ fontSize: '2.5rem', fontWeight: 900, color: '#10b981' }}>{Math.max(0, pct - 12)}%</div>
+                    <div style={{ fontSize: '2.5rem', fontWeight: 900, color: '#1A3263' }}>{Math.max(0, pct - 12)}%</div>
                     <div style={{ fontSize: '0.8rem', color: '#94a3b8', marginTop: '0.4rem' }}>Target: SSC, Bank PO</div>
                 </div>
                 <div style={{ background: 'linear-gradient(135deg, #0f172a, #1e293b)', border: '1px solid #f59e0b50', borderRadius: 24, padding: '1.5rem', textAlign: 'center' }}>
@@ -124,7 +124,7 @@ const AptAnalytics = ({ result, history, radarData, onRetry, onBack }) => {
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1.25rem', marginBottom: '2rem' }}>
                 {[
-                    { label: 'Accuracy', value: `${pct}%`, icon: '🎯', color: '#10b981' },
+                    { label: 'Accuracy', value: `${pct}%`, icon: '🎯', color: '#1A3263' },
                     { label: 'Solve Speed', value: `${timeEff} Q/m`, icon: '⚡', color: '#06b6d4' },
                     { label: 'Questions', value: `${correct}/${total}`, icon: '✅', color: '#6366f1' },
                     { label: 'Time Spent', value: `${Math.round(result.timeUsed / 60)}m`, icon: '⏱️', color: '#ec4899' }
@@ -144,7 +144,7 @@ const AptAnalytics = ({ result, history, radarData, onRetry, onBack }) => {
                     <div style={{ display: 'grid', gap: '1.5rem' }}>
                         {Object.entries(topicBreakdown || {}).map(([topic, data]) => {
                             const tp = Math.round((data.correct / data.total) * 100);
-                            const tc = tp >= 75 ? '#10b981' : tp >= 50 ? '#f59e0b' : '#ef4444';
+                            const tc = tp >= 75 ? '#1A3263' : tp >= 50 ? '#f59e0b' : '#ef4444';
                             return (
                                 <div key={topic}>
                                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8, fontSize: '0.9rem' }}>

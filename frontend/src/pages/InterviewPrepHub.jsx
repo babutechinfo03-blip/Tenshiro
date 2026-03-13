@@ -12,7 +12,7 @@ const sectors = [
     { id: 'IT', icon: <FaLaptopCode />, color: '#6366f1' },
     { id: 'Core', icon: <FaCogs />, color: '#8b5cf6' },
     { id: 'Govt', icon: <FaGavel />, color: '#f59e0b' },
-    { id: 'Banking', icon: <FaUniversity />, color: '#10b981' },
+    { id: 'Banking', icon: <FaUniversity />, color: '#1A3263' },
     { id: 'Consulting', icon: <FaUserTie />, color: '#ec4899' },
     { id: 'Product', icon: <FaBuilding />, color: '#06b6d4' },
     { id: 'Healthcare', icon: <FaHeartbeat />, color: '#ef4444' },

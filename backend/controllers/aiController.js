@@ -825,3 +825,42 @@ exports.generateRoadmap = async (req, res) => {
         res.json(getMockRoadmap(role, duration));
     }
 };
+
+// Save a roadmap for the user
+exports.saveUserRoadmap = async (req, res) => {
+    const { roleTitle, roadmapData } = req.body;
+    const userId = req.user.id;
+
+    if (!roleTitle || !roadmapData) {
+        return res.status(400).json({ message: 'Role title and roadmap data are required' });
+    }
+
+    try {
+        // Deactivate old roadmaps for this user
+        await db.query('UPDATE user_roadmaps SET is_active = FALSE WHERE user_id = ?', [userId]);
+
+        // Insert new one
+        await db.query(
+            'INSERT INTO user_roadmaps (user_id, role_title, roadmap_data) VALUES (?, ?, ?)',
+            [userId, roleTitle, JSON.stringify(roadmapData)]
+        );
+        res.json({ message: 'Roadmap saved successfully' });
+    } catch (err) {
+        console.error('Save Roadmap Error:', err);
+        res.status(500).json({ message: 'Failed to save roadmap' });
+    }
+};
+
+// Get all roadmaps for the user
+exports.getUserRoadmaps = async (req, res) => {
+    const userId = req.user.id;
+    try {
+        const [roadmaps] = await db.query(
+            'SELECT * FROM user_roadmaps WHERE user_id = ? ORDER BY created_at DESC',
+            [userId]
+        );
+        res.json(roadmaps);
+    } catch (err) {
+        res.status(500).json({ message: 'Failed to fetch roadmaps' });
+    }
+};
