@@ -94,6 +94,17 @@ const AptAnalytics = ({ result, history, radarData, onRetry, onBack }) => {
 
     return (
         <div style={{ padding: '1rem', animation: 'fadeInUp 0.6s ease' }}>
+            {/* Termination Banner */}
+            {result.terminationReason && (
+                <div style={{ background: '#ef444415', border: '1px solid #ef444450', borderRadius: 24, padding: '1.5rem', display: 'flex', alignItems: 'center', gap: '1.5rem', marginBottom: '2rem', animation: 'fadeInUp 0.3s ease' }}>
+                    <div style={{ fontSize: '2.5rem' }}>🛑</div>
+                    <div style={{ textAlign: 'left' }}>
+                        <div style={{ color: '#ef4444', fontWeight: 900, fontSize: '1.2rem', textTransform: 'uppercase' }}>Exam Terminated Automatically</div>
+                        <div style={{ color: 'var(--text-main)', fontSize: '0.95rem', marginTop: 4 }}>Reason: <strong style={{ color: '#ef4444' }}>{result.terminationReason}</strong></div>
+                    </div>
+                </div>
+            )}
+
             {/* Top Score Banner */}
             <div style={{ background: 'var(--bg-secondary)', border: `1px solid ${color}30`, borderRadius: 24, padding: '3rem 2rem', textAlign: 'center', marginBottom: '2rem', position: 'relative', overflow: 'hidden' }}>
                 <div style={{ position: 'absolute', top: -50, right: -50, width: 200, height: 200, background: `${color}10`, borderRadius: '50%', filter: 'blur(60px)' }}></div>
@@ -115,9 +126,9 @@ const AptAnalytics = ({ result, history, radarData, onRetry, onBack }) => {
                     <div style={{ fontSize: '2.5rem', fontWeight: 900, color: '#1A3263' }}>{Math.max(0, pct - 12)}%</div>
                     <div style={{ fontSize: '0.8rem', color: '#94a3b8', marginTop: '0.4rem' }}>Target: SSC, Bank PO</div>
                 </div>
-                <div style={{ background: 'linear-gradient(135deg, #0f172a, #1e293b)', border: '1px solid #f59e0b50', borderRadius: 24, padding: '1.5rem', textAlign: 'center' }}>
+                <div style={{ background: 'linear-gradient(135deg, #0f172a, #1e293b)', border: '1px solid #1A326350', borderRadius: 24, padding: '1.5rem', textAlign: 'center' }}>
                     <div style={{ fontSize: '0.7rem', fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase', marginBottom: '0.8rem' }}>Est. Global Rank</div>
-                    <div style={{ fontSize: '2.5rem', fontWeight: 900, color: '#f59e0b' }}>#{Math.max(1, 1000 - Math.round(pct * 9.5))}</div>
+                    <div style={{ fontSize: '2.5rem', fontWeight: 900, color: '#1A3263' }}>#{Math.max(1, 1000 - Math.round(pct * 9.5))}</div>
                     <div style={{ fontSize: '0.8rem', color: '#94a3b8', marginTop: '0.4rem' }}>Top {100 - pct}% of aspirants</div>
                 </div>
             </div>
@@ -144,7 +155,7 @@ const AptAnalytics = ({ result, history, radarData, onRetry, onBack }) => {
                     <div style={{ display: 'grid', gap: '1.5rem' }}>
                         {Object.entries(topicBreakdown || {}).map(([topic, data]) => {
                             const tp = Math.round((data.correct / data.total) * 100);
-                            const tc = tp >= 75 ? '#1A3263' : tp >= 50 ? '#f59e0b' : '#ef4444';
+                            const tc = tp >= 75 ? '#1A3263' : tp >= 50 ? '#1A3263' : '#ef4444';
                             return (
                                 <div key={topic}>
                                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8, fontSize: '0.9rem' }}>
@@ -180,10 +191,10 @@ const AptAnalytics = ({ result, history, radarData, onRetry, onBack }) => {
 
 
                     {sillyMistakes > 0 && (
-                        <div style={{ background: '#f59e0b10', border: '2px solid #f59e0b30', borderRadius: 20, padding: '1.5rem', display: 'flex', gap: 15 }}>
+                        <div style={{ background: '#1A326310', border: '2px solid #1A326330', borderRadius: 20, padding: '1.5rem', display: 'flex', gap: 15 }}>
                             <div style={{ fontSize: '2rem' }}>⚠️</div>
                             <div>
-                                <h4 style={{ margin: 0, color: '#f59e0b', fontWeight: 900, fontSize: '1rem' }}>Silly Mistake Detector: {sillyMistakes}</h4>
+                                <h4 style={{ margin: 0, color: '#1A3263', fontWeight: 900, fontSize: '1rem' }}>Silly Mistake Detector: {sillyMistakes}</h4>
                                 <p style={{ margin: '5px 0 0', color: 'var(--text-muted)', fontSize: '0.85rem', lineHeight: 1.5 }}>You missed {sillyMistakes} easy question(s). This indicates a possible dip in concentration.</p>
                             </div>
                         </div>

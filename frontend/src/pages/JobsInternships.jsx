@@ -200,7 +200,7 @@ const JobsInternships = () => {
 
     const stages = [
         { value: 'all', label: t('jobs.stages.discovery'), icon: <FaMagic />, color: 'var(--primary)' },
-        { value: 'saved', label: t('jobs.stages.saved'), icon: <FaBookmark />, color: '#f59e0b' }
+        { value: 'saved', label: t('jobs.stages.saved'), icon: <FaBookmark />, color: '#1A3263' }
     ];
 
     const getStageColor = (stage) => {

@@ -16,7 +16,10 @@ import ResumePage from './pages/ResumePage';
 import InterviewPrepHub from './pages/InterviewPrepHub';
 import AIChatAssistant from './pages/AIChatAssistant';
 import CommunicationIntelligenceLab from './pages/CommunicationIntelligenceLab';
+import CareerSimulationHub from './pages/CareerSimulationHub';
+import CareerSimulationRoom from './pages/CareerSimulationRoom';
 import GoogleCallback from './pages/GoogleCallback';
+import CareerLearningAcademy from './pages/CareerLearningAcademy';
 
 import ProtectedRoute from './components/ProtectedRoute';
 import MainLayout from './layouts/MainLayout';
@@ -24,6 +27,10 @@ import RoleLayout from './layouts/RoleLayout';
 import ErrorBoundary from './components/ErrorBoundary';
 import PathPilotAssistant from './components/PathPilotAssistant';
 import PracticeAssistant from './components/PracticeAssistant';
+import { ProctoringProvider } from './context/ProctoringContext';
+import AssessmentReport from './pages/AssessmentReport';
+import AssessmentCertificate from './pages/AssessmentCertificate';
+import AdminPanel from './pages/AdminPanel';
 import './index.css';
 
 
@@ -34,10 +41,6 @@ function App() {
         <ThemeProvider>
           <Router>
             <Routes>
-              {/* The following lines from the provided edit are syntactically incorrect in this context and have been omitted to maintain a functional application.
-              await login(email, password);
-              navigate('/domains');
-              */}
               <Route path="/" element={<Landing />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
@@ -55,15 +58,27 @@ function App() {
                   <Route path="/resume" element={<ResumePage />} />
                   <Route path="/interview-prep" element={<InterviewPrepHub />} />
                   <Route path="/ai-assistant" element={<AIChatAssistant />} />
-
-
+                  <Route path="/career-simulation" element={<CareerSimulationHub />} />
                 </Route>
+
+                {/* Fullscreen Protected Routes */}
+                <Route path="/simulation-room" element={
+                  <ProctoringProvider>
+                    <CareerSimulationRoom />
+                  </ProctoringProvider>
+                } />
+                <Route path="/assessment-report" element={<AssessmentReport />} />
+                <Route path="/assessment-certificate" element={<AssessmentCertificate />} />
+                <Route path="/admin" element={<AdminPanel />} />
 
                 {/* Protected Routes with RoleLayout (Role Details) */}
                 <Route element={<RoleLayout />}>
                   <Route path="/roles/:id" element={<RoleAccess />} />
                   <Route path="/roadmap/:roleId" element={<Roadmap />} />
                 </Route>
+
+                {/* Career Learning Academy - Full Screen, own layout */}
+                <Route path="/learn/:role/:skill" element={<CareerLearningAcademy />} />
               </Route>
             </Routes>
 

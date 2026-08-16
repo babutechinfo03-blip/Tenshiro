@@ -9,8 +9,7 @@ const MainLayout = () => {
 
     return (
         <div className="app-container">
-            <Navbar onToggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} />
-            <div className="main-content">
+            <div className="main-content" style={{ marginTop: 0 }}>
                 <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
                 <div className="page-content" style={{ marginLeft: 'var(--sidebar-collapsed-width)' }}>
                     <Outlet />

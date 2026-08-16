@@ -227,11 +227,11 @@ const AptLearnMode = ({ onStartPractice }) => {
 
     const practiceButtons = [
         { label: '⚡ Easy', diff: 'Easy', style: { background: '#ecfdf5', color: '#059669', border: '1px solid #6ee7b7' } },
-        { label: '🔥 Medium', diff: 'Medium', style: { background: '#fffbeb', color: '#d97706', border: '1px solid #fcd34d' } },
+        { label: '🔥 Medium', diff: 'Medium', style: { background: '#eff6ff', color: '#1e40af', border: '1px solid #93c5fd' } },
         { label: '💥 Hard', diff: 'Hard', style: { background: '#fff1f2', color: '#e11d48', border: '1px solid #fca5a5' } },
         { label: '📋 Sectional Mock', diff: 'Adaptive', style: { background: '#eef2ff', color: '#4338ca', border: '1px solid #c7d2fe' } },
         { label: '🏢 Company Style', diff: 'Medium', style: { background: '#fdf4ff', color: '#7e22ce', border: '1px solid #d8b4fe' } },
-        { label: '🏛️ Govt PYQs', diff: 'Hard', style: { background: '#fff7ed', color: '#c2410c', border: '1px solid #fdba74' } },
+        { label: '🏛️ Govt PYQs', diff: 'Hard', style: { background: '#f0f9ff', color: '#0369a1', border: '1px solid #7dd3fc' } },
     ];
 
     const topicResources = selTopic ? getTopicResources(selTopic) : null;

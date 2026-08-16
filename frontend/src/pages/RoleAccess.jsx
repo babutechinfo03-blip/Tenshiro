@@ -1062,6 +1062,52 @@ const RoleAccess = () => {
                     display: flex;
                 }
 
+                /* --- SKELETON LOADERS --- */
+                .shimmer {
+                    background: var(--bg-card);
+                    background-image: linear-gradient(
+                        90deg,
+                        rgba(255, 255, 255, 0) 0,
+                        rgba(255, 255, 255, 0.05) 20%,
+                        rgba(255, 255, 255, 0.1) 60%,
+                        rgba(255, 255, 255, 0)
+                    );
+                    background-size: 200% 100%;
+                    animation: shimmer 1.5s infinite linear;
+                    border-radius: 16px;
+                    border: 1px solid var(--border);
+                }
+                @keyframes shimmer {
+                    0% { background-position: -200% 0; }
+                    100% { background-position: 200% 0; }
+                }
+                .skeleton-guidance {
+                    width: 100%;
+                    height: 400px;
+                    margin-bottom: 1.5rem;
+                }
+                .grid-skeleton {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+                    gap: 1.5rem;
+                }
+                .skeleton-card {
+                    height: 250px;
+                    width: 100%;
+                }
+                .roadmap-skeleton {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 1rem;
+                    margin-top: 2rem;
+                }
+                .skeleton-phase {
+                    height: 80px;
+                    width: 100%;
+                }
+                /* ------------------------ */
+
+
                 /* Sidebar Styles */
                 .fixed-sidebar {
                     width: 230px;
@@ -1515,7 +1561,7 @@ const RoleAccess = () => {
                 .rm-portfolio-tag { font-size: 0.65rem; font-weight: 800; padding: 2px 6px; border-radius: 4px; }
                 .rm-portfolio-tag.pv-low { background: rgba(100, 116, 139, 0.1); color: #64748b; }
                 .rm-portfolio-tag.pv-medium { background: rgba(26, 50, 99, 0.1); color: #1A3263; }
-                .rm-portfolio-tag.pv-high { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
+                .rm-portfolio-tag.pv-high { background: rgba(26, 50, 99, 0.1); color: #1A3263; }
                 .rm-portfolio-tag.pv-very-high { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
                 .rm-portfolio-tag.pv-essential { background: rgba(139, 92, 246, 0.1); color: #8b5cf6; }
                 
@@ -1607,14 +1653,14 @@ const RoleAccess = () => {
                 
                 .diff-tag { font-size: 0.7rem; font-weight: 700; padding: 3px 10px; border-radius: 6px; text-transform: uppercase; }
                 .diff-tag.Beginner { background: rgba(26, 50, 99, 0.1); color: #1A3263; }
-                .diff-tag.Intermediate { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
+                .diff-tag.Intermediate { background: rgba(26, 50, 99, 0.1); color: #1A3263; }
                 .diff-tag.Advanced { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
                 
                 .course-card-ui h4, .project-card-ui h4 { margin: 0 0 10px 0; font-size: 1.05rem; line-height: 1.5; font-weight: 700; color: var(--text-main); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; height: 3.15rem; }
                 .c-meta, .p-duration { display: flex; align-items: center; gap: 8px; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1rem; }
                 
                 .c-footer { display: flex; justify-content: space-between; align-items: center; margin-top: auto; padding-top: 1rem; border-top: 1px solid var(--border); }
-                .rating { display: flex; align-items: center; gap: 6px; color: #f59e0b; font-weight: 700; font-size: 0.85rem; }
+                .rating { display: flex; align-items: center; gap: 6px; color: #1A3263; font-weight: 700; font-size: 0.85rem; }
                 .view-link-btn { background: var(--primary); color: white; padding: 6px 14px; border-radius: 8px; text-decoration: none; font-size: 0.85rem; font-weight: 600; transition: 0.2s; }
                 .view-link-btn:hover { filter: brightness(1.1); }
                 

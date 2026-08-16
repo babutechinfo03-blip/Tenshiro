@@ -51,12 +51,14 @@ const Navbar = ({ onToggleSidebar, onLoginClick, onRegisterClick }) => {
             boxShadow: isScrolled ? '0 10px 30px -10px rgba(0,0,0,0.08)' : 'none'
         }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
-                <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', textDecoration: 'none', color: 'var(--text-main)', fontWeight: '800', fontSize: '1.5rem', letterSpacing: '-0.04em' }}>
-                    <div style={{ background: '#1A3263', padding: '0.5rem', borderRadius: '12px', display: 'flex', boxShadow: '0 4px 12px rgba(26, 50, 99, 0.3)' }}>
-                        <FaGraduationCap size={22} color="white" />
-                    </div>
-                    <span style={{ fontSize: '1.6rem', color: 'var(--text-main)', fontWeight: '800' }}>Tenshiro</span>
-                </Link>
+                {!user && (
+                    <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', textDecoration: 'none', color: 'var(--text-main)', fontWeight: '800', fontSize: '1.5rem', letterSpacing: '-0.04em' }}>
+                        <div style={{ background: '#1A3263', padding: '0.5rem', borderRadius: '12px', display: 'flex', boxShadow: '0 4px 12px rgba(26, 50, 99, 0.3)' }}>
+                            <FaGraduationCap size={22} color="white" />
+                        </div>
+                        <span style={{ fontSize: '1.6rem', color: 'var(--text-main)', fontWeight: '800' }}>Tenshiro</span>
+                    </Link>
+                )}
             </div>
 
             {isLandingPage && (

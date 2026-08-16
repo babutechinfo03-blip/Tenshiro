@@ -143,3 +143,43 @@ exports.devLogin = async (req, res) => {
         res.status(500).json({ error: 'Dev login failed' });
     }
 };
+
+// Subscribe to Job Alerts
+exports.subscribeJobAlerts = async (req, res) => {
+    const { role, platforms } = req.body;
+    const userId = req.user.id;
+
+    if (!role || !platforms || platforms.length === 0) {
+        return res.status(400).json({ message: 'Role and at least one platform are required.' });
+    }
+
+    try {
+        // Ensure the job_alerts table exists
+        await db.query(`
+            CREATE TABLE IF NOT EXISTS job_alerts (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                user_id INT NOT NULL,
+                role VARCHAR(255) NOT NULL,
+                platforms JSON NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+            )
+        `);
+
+        // Check if alert already exists for this role
+        const [existing] = await db.query('SELECT id FROM job_alerts WHERE user_id = ? AND role = ?', [userId, role]);
+
+        if (existing.length > 0) {
+            // Update existing alert
+            await db.query('UPDATE job_alerts SET platforms = ? WHERE id = ?', [JSON.stringify(platforms), existing[0].id]);
+        } else {
+            // Insert new alert
+            await db.query('INSERT INTO job_alerts (user_id, role, platforms) VALUES (?, ?, ?)', [userId, role, JSON.stringify(platforms)]);
+        }
+
+        res.json({ message: `Successfully subscribed to ${role} alerts on ${platforms.join(', ')}.` });
+    } catch (err) {
+        console.error('Job Alerts Subscription Error:', err);
+        res.status(500).json({ error: 'Failed to subscribe to job alerts' });
+    }
+};

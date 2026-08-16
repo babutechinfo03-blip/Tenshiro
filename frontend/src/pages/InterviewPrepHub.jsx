@@ -11,12 +11,12 @@ import './InterviewPrepHub.css';
 const sectors = [
     { id: 'IT', icon: <FaLaptopCode />, color: '#6366f1' },
     { id: 'Core', icon: <FaCogs />, color: '#8b5cf6' },
-    { id: 'Govt', icon: <FaGavel />, color: '#f59e0b' },
+    { id: 'Govt', icon: <FaGavel />, color: '#1A3263' },
     { id: 'Banking', icon: <FaUniversity />, color: '#1A3263' },
     { id: 'Consulting', icon: <FaUserTie />, color: '#ec4899' },
     { id: 'Product', icon: <FaBuilding />, color: '#06b6d4' },
     { id: 'Healthcare', icon: <FaHeartbeat />, color: '#ef4444' },
-    { id: 'EdTech', icon: <FaGraduationCap />, color: '#f97316' },
+    { id: 'EdTech', icon: <FaGraduationCap />, color: '#1A3263' },
     { id: 'Design', icon: <FaPalette />, color: '#8b5cf6' }
 ];
 
@@ -258,7 +258,7 @@ const InterviewPrepHub = () => {
                                         >
                                             {t('interview.enterHub')} <FaArrowRight />
                                         </button>
-                                        <button className="btn-outline reset-btn" onClick={handleReset}>
+                                        <button className="btn btn-outline reset-btn" onClick={handleReset}>
                                             <FaRedo /> {t('interview.changeSelection')}
                                         </button>
                                     </div>
@@ -292,7 +292,7 @@ const InterviewPrepHub = () => {
                                     >
                                         {t('interview.enterHub')} <FaArrowRight />
                                     </button>
-                                    <button className="btn-outline reset-btn" onClick={handleReset}>
+                                    <button className="btn btn-outline reset-btn" onClick={handleReset}>
                                         <FaRedo /> {t('interview.changeSelection')}
                                     </button>
                                 </div>

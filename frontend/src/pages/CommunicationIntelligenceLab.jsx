@@ -1,47 +1,49 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
-    FaBookOpen, FaMicrophone, FaRobot, FaUserTie,
-    FaArrowLeft, FaPlayCircle, FaCheckCircle, FaExclamationCircle,
-    FaChartLine, FaLightbulb, FaVolumeUp, FaVideo, FaFilePdf, FaChalkboardTeacher, FaGamepad, FaDownload, FaSearch, FaExternalLinkAlt,
-    FaClock, FaTrophy, FaRedo, FaLink
+    FaBookOpen, FaArrowLeft, FaPlayCircle, FaCheckCircle, FaExclamationCircle,
+    FaLightbulb, FaVideo, FaChalkboardTeacher, FaGamepad, FaSearch, FaExternalLinkAlt,
+    FaClock, FaTrophy, FaRedo, FaLink, FaChartLine, FaMicrophone, FaVolumeUp, FaBriefcase,
+    FaEnvelope, FaUsers, FaUserTie, FaAward, FaBrain, FaHandsHelping, FaShieldAlt,
+    FaDownload, FaTimes, FaStar, FaCertificate
 } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 import './CommunicationIntelligenceLab.css';
+import CommunicationTestRunner from '../components/communication/CommunicationTestRunner';
 
 const CommunicationIntelligenceLab = () => {
     const { user } = useAuth();
+    const [mainTab, setMainTab] = useState('learning'); // 'learning' | 'assessment'
     const [activeSection, setActiveSection] = useState(null);
     const [selectedTopic, setSelectedTopic] = useState(null);
     const [selectedSubtopicIndex, setSelectedSubtopicIndex] = useState(0);
     const [loading, setLoading] = useState(true);
+    const [showCertModal, setShowCertModal] = useState(false);
+    const certRef = useRef(null);
 
-    // AI Chat States
-    const [messages, setMessages] = useState([]);
-    const [chatInput, setChatInput] = useState('');
-    const [chatLoading, setChatLoading] = useState(false);
-    const [currentRole, setCurrentRole] = useState('hr'); // for interview
+    // Assessment scores
+    const [quizScore, setQuizScore] = useState(82);
+    const [speakingScore, setSpeakingScore] = useState(85);
 
-    // AI Speaking States
-    const [isRecording, setIsRecording] = useState(false);
-    const [recordedText, setRecordedText] = useState('');
-    const [speechAnalysis, setSpeechAnalysis] = useState(null);
-    const recognitionRef = React.useRef(null);
-    const chatEndRef = React.useRef(null);
+    const getLevel = (score) => {
+        if (score <= 40) return 'Beginner';
+        if (score <= 60) return 'Intermediate';
+        if (score <= 80) return 'Advanced';
+        if (score <= 90) return 'Professional';
+        return 'Placement Ready';
+    };
+
+    const overallReadiness = Math.round((quizScore + speakingScore) / 2);
 
     // Data states
     const [grammarTopics, setGrammarTopics] = useState([]);
-    const [grammarQuizzes, setGrammarQuizzes] = useState([]);
     const [courses, setCourses] = useState([]);
     const [videos, setVideos] = useState([]);
     const [resources, setResources] = useState([]);
-    const [pdfs, setPdfs] = useState([]);
 
-    // Optional states for interactions
+    // Search
     const [searchQuery, setSearchQuery] = useState('');
-    const [quizAnswers, setQuizAnswers] = useState({});
-    const [quizScores, setQuizScores] = useState({});
 
     // Grammar Practice states
     const [practiceTopicSelected, setPracticeTopicSelected] = useState(null);
@@ -58,7 +60,6 @@ const CommunicationIntelligenceLab = () => {
     const [activeLevel, setActiveLevel] = useState('All');
     const [activeTopic, setActiveTopic] = useState('All');
     const [activeCat, setActiveCat] = useState('All');
-    const [activePdfTopic, setActivePdfTopic] = useState('All');
 
     useEffect(() => {
         fetchData();
@@ -70,21 +71,17 @@ const CommunicationIntelligenceLab = () => {
             const token = localStorage.getItem('token');
             const config = { headers: { Authorization: `Bearer ${token}` } };
 
-            const [gRes, qRes, cRes, vRes, rRes, pRes] = await Promise.all([
+            const [gRes, cRes, vRes, rRes] = await Promise.all([
                 axios.get('/api/comm/grammar', config).catch(() => ({ data: [] })),
-                axios.get('/api/comm/quizzes', config).catch(() => ({ data: [] })),
                 axios.get('/api/comm/courses', config).catch(() => ({ data: [] })),
                 axios.get('/api/comm/videos', config).catch(() => ({ data: [] })),
-                axios.get('/api/comm/resources', config).catch(() => ({ data: [] })),
-                axios.get('/api/comm/pdfs', config).catch(() => ({ data: [] }))
+                axios.get('/api/comm/resources', config).catch(() => ({ data: [] }))
             ]);
 
             setGrammarTopics(gRes.data);
-            setGrammarQuizzes(qRes.data);
             setCourses(cRes.data);
             setVideos(vRes.data);
             setResources(rRes.data);
-            setPdfs(pRes.data);
         } catch (error) {
             console.error("Error fetching lab data:", error);
         } finally {
@@ -92,35 +89,8 @@ const CommunicationIntelligenceLab = () => {
         }
     };
 
-    const handleQuizSubmit = (quizId, selectedOption, correctOption) => {
-        setQuizAnswers(prev => ({ ...prev, [quizId]: selectedOption }));
-        if (selectedOption === correctOption) {
-            setQuizScores(prev => ({ ...prev, [quizId]: true }));
-        } else {
-            setQuizScores(prev => ({ ...prev, [quizId]: false }));
-        }
-    };
-
-    // Filter helper
-    const filteredContent = (items) => {
-        if (!searchQuery) return items;
-        return items.filter(item =>
-            String(item.title || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
-            String(item.description || '').toLowerCase().includes(searchQuery.toLowerCase())
-        );
-    };
-
-    // Auto-scroll chat
-    useEffect(() => {
-        if (chatEndRef.current) chatEndRef.current.scrollIntoView({ behavior: 'smooth' });
-    }, [messages]);
-
     // Cleanup active section state changes
     useEffect(() => {
-        setMessages([]);
-        setChatInput('');
-        setSpeechAnalysis(null);
-        setRecordedText('');
         setSelectedTopic(null);
         setPracticeTopicSelected(null);
         setMockTestActive(false);
@@ -129,14 +99,11 @@ const CommunicationIntelligenceLab = () => {
         setMockTestSubmitted(false);
         setMockTimer(600);
         if (mockTimerRef.current) clearInterval(mockTimerRef.current);
-        if (isRecording) stopRecording();
-
-        // Reset filter states
         setActivePlatform('All');
         setActiveLevel('All');
         setActiveTopic('All');
         setActiveCat('All');
-        setActivePdfTopic('All');
+        setSearchQuery('');
     }, [activeSection]);
 
     // Mock test timer
@@ -198,97 +165,17 @@ const CommunicationIntelligenceLab = () => {
         }, 0);
     };
 
-    // Speech Recognition Setup
-    useEffect(() => {
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        if (SpeechRecognition) {
-            recognitionRef.current = new SpeechRecognition();
-            recognitionRef.current.continuous = true;
-            recognitionRef.current.interimResults = true;
-            recognitionRef.current.lang = 'en-US';
-
-            recognitionRef.current.onresult = (event) => {
-                const transcript = Array.from(event.results)
-                    .map(result => result[0])
-                    .map(result => result.transcript)
-                    .join('');
-                setRecordedText(transcript);
-            };
-        }
-    }, []);
-
-    const startRecording = () => {
-        if (recognitionRef.current) {
-            setIsRecording(true);
-            setRecordedText('');
-            setSpeechAnalysis(null);
-            recognitionRef.current.start();
-        } else {
-            alert('Speech recognition is not supported in this browser. Try Chrome.');
-        }
-    };
-
-    const stopRecording = async () => {
-        if (recognitionRef.current) {
-            setIsRecording(false);
-            recognitionRef.current.stop();
-            analyzeSpeech(recordedText);
-        }
-    };
-
-    const analyzeSpeech = async (text) => {
-        if (!text.trim()) return;
-        setLoading(true);
-        try {
-            const token = localStorage.getItem('token');
-            const res = await axios.post('/api/comm/analyze-speech', { text }, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            setSpeechAnalysis(res.data);
-        } catch (err) {
-            console.error("Analysis failed", err);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const handleSendMessage = async (e, aiType) => {
-        if (e) e.preventDefault();
-        if (!chatInput.trim()) return;
-        const msg = chatInput;
-        setMessages(prev => [...prev, { role: 'user', content: msg }]);
-        setChatInput('');
-        setChatLoading(true);
-
-        try {
-            const token = localStorage.getItem('token');
-            const payload = { message: msg, aiType, history: messages.slice(-6) };
-            if (aiType === 'interview') payload.interviewRole = currentRole;
-
-            const res = await axios.post('/api/comm/ai-chat', payload, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-
-            setMessages(prev => [...prev, { role: 'assistant', content: res.data.response }]);
-        } catch (err) {
-            setMessages(prev => [...prev, { role: 'assistant', content: "I'm having trouble connecting right now. Please try again." }]);
-        } finally {
-            setChatLoading(false);
-        }
-    };
-
     const sections = [
         { id: 'grammar-learn', title: 'Grammar Learning', icon: <FaChalkboardTeacher />, color: '#6366f1', desc: 'Complete English grammar modules from basics to advanced.' },
         { id: 'grammar-practice', title: 'Grammar Practice', icon: <FaGamepad />, color: '#1A3263', desc: 'Interactive quizzes for all grammar topics.' },
-        { id: 'courses', title: 'Communication Courses', icon: <FaBookOpen />, color: '#f59e0b', desc: 'Curated courses from Harvard, Coursera, and more.' },
+        { id: 'courses', title: 'Communication Courses', icon: <FaBookOpen />, color: '#1A3263', desc: 'Curated courses from Harvard, Coursera, and more.' },
         { id: 'youtube', title: 'YouTube Learning Hub', icon: <FaVideo />, color: '#ef4444', desc: '200+ selected video lessons on professional speaking.' },
         { id: 'resources', title: 'Resource Library', icon: <FaLightbulb />, color: '#8b5cf6', desc: 'Guides and tips for communication improvement.' },
-        { id: 'pdf', title: 'PDF Materials', icon: <FaFilePdf />, color: '#ec4899', desc: 'Downloadable worksheets and professional guides.' },
-        { id: 'speaking', title: 'AI Speaking Practice', icon: <FaMicrophone />, color: '#06b6d4', desc: 'Real-time fluency and pronunciation analysis.' },
-        { id: 'chat', title: 'AI Conversation Practice', icon: <FaRobot />, color: '#14b8a6', desc: 'Natural dialogue practice with grammar correction.' },
-        { id: 'interview', title: 'Interview Communication', icon: <FaUserTie />, color: '#3b82f6', desc: 'Role-play HR and technical interviews.' },
-        { id: 'tutor', title: 'Live AI Tutor', icon: <FaUserTie />, color: '#d4af37', desc: 'Real-time mentoring, grammar correction, and coaching.' },
-        { id: 'tracker', title: 'Progress Tracker', icon: <FaChartLine />, color: '#0ea5e9', desc: 'Analyze your vocabulary, grammar, and fluency growth.' },
+    ];
+
+    const assessmentTests = [
+        { id: 'comm-quiz', title: 'Communication Quiz Assessment', icon: <FaBrain />, color: '#6366f1', diff: 'Adaptive', dur: '15m', skills: 'Grammar, Vocab, Reading, Comm IQ', impact: 'High' },
+        { id: 'ai-speaking', title: 'AI Speaking Assessment', icon: <FaMicrophone />, color: '#ec4899', diff: 'Intermediate', dur: '10m', skills: 'Fluency, Pronunciation, Confidence', impact: 'Very High' }
     ];
 
     return (
@@ -304,50 +191,350 @@ const CommunicationIntelligenceLab = () => {
                         <div className="comm-badge"><FaLightbulb /><span>Premium Intelligence</span></div>
                         <h1>Communication <span style={{ color: 'var(--primary)' }}>Intelligence Lab</span></h1>
                         <p>Master English Communication with Structured Learning, Real Resources, and AI Practice.</p>
+                        
+                        {/* Main Tab Toggle */}
+                        <div className="comm-main-tabs">
+                            <button className={mainTab === 'learning' ? 'active' : ''} onClick={() => setMainTab('learning')}>
+                                <FaChalkboardTeacher /> Learning Hub
+                            </button>
+                            <button className={mainTab === 'assessment' ? 'active' : ''} onClick={() => setMainTab('assessment')}>
+                                <FaChartLine /> Assessment Center
+                            </button>
+                        </div>
                     </header>
 
-                    <div className="comm-grid">
-                        {sections.map((sec, idx) => (
-                            <motion.div
-                                key={sec.id}
-                                className="comm-card-premium"
-                                onClick={() => setActiveSection(sec.id)}
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: idx * 0.05 }}
-                            >
-                                <div className="card-icon-wrapper" style={{ background: `${sec.color}15`, color: sec.color }}>{sec.icon}</div>
-                                <div className="card-content">
-                                    <h3>{sec.title}</h3>
-                                    <p>{sec.desc}</p>
+                    {mainTab === 'learning' ? (
+                        <div className="comm-grid">
+                            {sections.map((sec, idx) => (
+                                <motion.div
+                                    key={sec.id}
+                                    className="comm-card-premium"
+                                    onClick={() => setActiveSection(sec.id)}
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: idx * 0.05 }}
+                                >
+                                    <div className="card-icon-wrapper" style={{ background: `${sec.color}15`, color: sec.color }}>{sec.icon}</div>
+                                    <div className="card-content">
+                                        <h3>{sec.title}</h3>
+                                        <p>{sec.desc}</p>
+                                    </div>
+                                    <div className="card-footer-elite"><FaPlayCircle /></div>
+                                </motion.div>
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="assessment-center-view">
+                            
+                            {/* Mastery Dashboard */}
+                            <div className="mastery-dashboard">
+                                <div className="mastery-card score-card">
+                                    <div className="score-circle" style={{ background: `conic-gradient(var(--primary) ${overallReadiness}%, var(--border) 0)` }}>
+                                        <span>{overallReadiness}%</span>
+                                    </div>
+                                    <div className="score-details">
+                                        <h3>Overall Communication Readiness</h3>
+                                        <div className="level-badge">{getLevel(overallReadiness)}</div>
+                                    </div>
                                 </div>
-                                <div className="card-footer-elite"><FaPlayCircle /></div>
-                            </motion.div>
-                        ))}
-                    </div>
+                                <div className="mastery-card metrics-card">
+                                    <div className="metric"><span className="m-label">Communication Quiz</span> <span className="m-val">{quizScore}%</span></div>
+                                    <div className="metric"><span className="m-label">AI Speaking</span> <span className="m-val">{speakingScore}%</span></div>
+                                </div>
+                                <div className="mastery-card coach-card">
+                                    <h3><FaUserTie /> AI Communication Coach</h3>
+                                    <ul className="coach-insights">
+                                        <li><strong>Speaking:</strong> Try spelling and pronunciation exercises to improve fluency.</li>
+                                        <li><strong>Quiz Accuracy:</strong> Your theoretical vocabulary is outstanding.</li>
+                                        <li><strong>Daily Task:</strong> Attempt the Placement communication scenario to verify readiness.</li>
+                                    </ul>
+                                </div>
+                                <div className="mastery-card cert-card">
+                                    <FaAward className="cert-icon" />
+                                    <h3>Certification</h3>
+                                    <p className="cert-desc">Score-based professional certificate</p>
+                                    <button className="cert-btn" onClick={() => setShowCertModal(true)}><FaCertificate /> View Certificate</button>
+                                </div>
+                            </div>
+
+                            <h2 className="section-title-premium" style={{ marginTop: '3rem', fontSize: '1.8rem' }}>Communication Test Center</h2>
+                            <p style={{ color: 'var(--text-muted)', marginBottom: '2rem' }}>Complete these AI-proctored tests to unlock your Professional Communication Certification.</p>
+
+                            {/* Assessment Tests Grid */}
+                            <div className="comm-grid">
+                                {assessmentTests.map((test, idx) => (
+                                    <motion.div
+                                        key={test.id}
+                                        className="comm-card-premium test-card"
+                                        onClick={() => setActiveSection(test.id)}
+                                        initial={{ opacity: 0, y: 20 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ delay: idx * 0.05 }}
+                                    >
+                                        <div className="card-header-row">
+                                            <div className="card-icon-wrapper" style={{ background: `${test.color}15`, color: test.color }}>{test.icon}</div>
+                                            <span className="diff-badge" style={{ color: test.color, borderColor: `${test.color}50` }}>{test.diff}</span>
+                                        </div>
+                                        <div className="card-content">
+                                            <h3>{test.title}</h3>
+                                            <div className="test-meta">
+                                                <span><FaClock /> {test.dur}</span>
+                                                <span><FaChartLine /> {test.impact} Impact</span>
+                                            </div>
+                                            <p className="skills-measured"><strong>Skills:</strong> {test.skills}</p>
+                                        </div>
+                                        <div className="card-footer-elite"><FaPlayCircle /></div>
+                                    </motion.div>
+                                ))}
+                            </div>
+
+                            {/* ═══ Certificate Modal ═══ */}
+                            {showCertModal && (
+                                <div className="cert-modal-overlay" onClick={() => setShowCertModal(false)}>
+                                    <div className="cert-modal-container" onClick={(e) => e.stopPropagation()}>
+                                        <div className="cert-modal-actions">
+                                            <button className="cert-download-btn" onClick={() => {
+                                                const certEl = certRef.current;
+                                                if (!certEl) return;
+                                                
+                                                // Use html2canvas-like approach with native canvas
+                                                const canvas = document.createElement('canvas');
+                                                const scale = 2;
+                                                canvas.width = 900 * scale;
+                                                canvas.height = 640 * scale;
+                                                const ctx = canvas.getContext('2d');
+                                                ctx.scale(scale, scale);
+                                                
+                                                // Background
+                                                const gradient = ctx.createLinearGradient(0, 0, 900, 640);
+                                                gradient.addColorStop(0, '#0f0f23');
+                                                gradient.addColorStop(0.5, '#1a1a3e');
+                                                gradient.addColorStop(1, '#0f0f23');
+                                                ctx.fillStyle = gradient;
+                                                ctx.fillRect(0, 0, 900, 640);
+                                                
+                                                // Border
+                                                ctx.strokeStyle = '#f59e0b';
+                                                ctx.lineWidth = 3;
+                                                ctx.strokeRect(20, 20, 860, 600);
+                                                ctx.strokeStyle = 'rgba(245, 158, 11, 0.3)';
+                                                ctx.lineWidth = 1;
+                                                ctx.strokeRect(30, 30, 840, 580);
+                                                
+                                                // Corner decorations
+                                                ctx.fillStyle = '#f59e0b';
+                                                [{ x: 25, y: 25 }, { x: 865, y: 25 }, { x: 25, y: 605 }, { x: 865, y: 605 }].forEach(p => {
+                                                    ctx.beginPath();
+                                                    ctx.arc(p.x, p.y, 6, 0, Math.PI * 2);
+                                                    ctx.fill();
+                                                });
+                                                
+                                                // Title badge
+                                                ctx.fillStyle = 'rgba(245, 158, 11, 0.15)';
+                                                ctx.beginPath();
+                                                ctx.roundRect(300, 45, 300, 30, 15);
+                                                ctx.fill();
+                                                ctx.fillStyle = '#f59e0b';
+                                                ctx.font = '600 11px Inter, sans-serif';
+                                                ctx.textAlign = 'center';
+                                                ctx.fillText('TENSHIRO COMMUNICATION INTELLIGENCE', 450, 65);
+                                                
+                                                // Main title
+                                                ctx.fillStyle = '#ffffff';
+                                                ctx.font = '800 36px Inter, sans-serif';
+                                                ctx.fillText('Certificate of Achievement', 450, 120);
+                                                
+                                                // Subtitle
+                                                ctx.fillStyle = 'rgba(255,255,255,0.5)';
+                                                ctx.font = '400 14px Inter, sans-serif';
+                                                ctx.fillText('This certificate is proudly presented to', 450, 155);
+                                                
+                                                // Name
+                                                ctx.fillStyle = '#f59e0b';
+                                                ctx.font = '800 32px Inter, sans-serif';
+                                                ctx.fillText(user?.name || 'Student', 450, 200);
+                                                
+                                                // Separator
+                                                const sepGrad = ctx.createLinearGradient(200, 0, 700, 0);
+                                                sepGrad.addColorStop(0, 'transparent');
+                                                sepGrad.addColorStop(0.5, '#f59e0b');
+                                                sepGrad.addColorStop(1, 'transparent');
+                                                ctx.strokeStyle = sepGrad;
+                                                ctx.lineWidth = 1.5;
+                                                ctx.beginPath();
+                                                ctx.moveTo(200, 220);
+                                                ctx.lineTo(700, 220);
+                                                ctx.stroke();
+                                                
+                                                // Description
+                                                ctx.fillStyle = 'rgba(255,255,255,0.6)';
+                                                ctx.font = '400 13px Inter, sans-serif';
+                                                ctx.fillText('For successfully completing the Communication Intelligence Assessment Program', 450, 250);
+                                                ctx.fillText(`and achieving ${getLevel(overallReadiness)} level proficiency in professional communication.`, 450, 270);
+                                                
+                                                // Score boxes
+                                                const boxY = 300;
+                                                const boxW = 180;
+                                                const boxH = 90;
+                                                const boxes = [
+                                                    { label: 'Communication Quiz', score: quizScore, x: 235 },
+                                                    { label: 'AI Speaking', score: speakingScore, x: 485 }
+                                                ];
+                                                
+                                                boxes.forEach(box => {
+                                                    ctx.fillStyle = 'rgba(255,255,255,0.04)';
+                                                    ctx.beginPath();
+                                                    ctx.roundRect(box.x, boxY, boxW, boxH, 12);
+                                                    ctx.fill();
+                                                    ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+                                                    ctx.lineWidth = 1;
+                                                    ctx.stroke();
+                                                    
+                                                    ctx.fillStyle = '#ffffff';
+                                                    ctx.font = '900 28px Inter, sans-serif';
+                                                    ctx.fillText(`${box.score}%`, box.x + boxW / 2, boxY + 42);
+                                                    
+                                                    ctx.fillStyle = 'rgba(255,255,255,0.5)';
+                                                    ctx.font = '600 11px Inter, sans-serif';
+                                                    ctx.fillText(box.label, box.x + boxW / 2, boxY + 68);
+                                                });
+                                                
+                                                // Overall score circle
+                                                const cx = 450, cy = 450;
+                                                ctx.beginPath();
+                                                ctx.arc(cx, cy, 42, 0, Math.PI * 2);
+                                                ctx.fillStyle = 'rgba(245, 158, 11, 0.15)';
+                                                ctx.fill();
+                                                ctx.strokeStyle = '#f59e0b';
+                                                ctx.lineWidth = 3;
+                                                ctx.stroke();
+                                                
+                                                ctx.fillStyle = '#f59e0b';
+                                                ctx.font = '900 26px Inter, sans-serif';
+                                                ctx.fillText(`${overallReadiness}%`, cx, cy + 8);
+                                                
+                                                ctx.fillStyle = 'rgba(255,255,255,0.5)';
+                                                ctx.font = '600 11px Inter, sans-serif';
+                                                ctx.fillText('OVERALL READINESS', cx, cy + 58);
+                                                
+                                                // Level badge
+                                                const level = getLevel(overallReadiness);
+                                                ctx.fillStyle = '#f59e0b';
+                                                ctx.beginPath();
+                                                ctx.roundRect(370, 520, 160, 32, 16);
+                                                ctx.fill();
+                                                ctx.fillStyle = '#0f0f23';
+                                                ctx.font = '800 13px Inter, sans-serif';
+                                                ctx.fillText(`★  ${level.toUpperCase()}  ★`, cx, 541);
+                                                
+                                                // Date
+                                                const date = new Date().toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' });
+                                                ctx.fillStyle = 'rgba(255,255,255,0.4)';
+                                                ctx.font = '400 12px Inter, sans-serif';
+                                                ctx.fillText(`Issued on ${date}`, 450, 580);
+                                                
+                                                // Footer
+                                                ctx.fillStyle = 'rgba(255,255,255,0.3)';
+                                                ctx.font = '400 10px Inter, sans-serif';
+                                                ctx.fillText('Tenshiro Communication Intelligence Lab · AI-Proctored Assessment', 450, 600);
+                                                
+                                                // Download
+                                                const link = document.createElement('a');
+                                                link.download = `Tenshiro_Communication_Certificate_${(user?.name || 'Student').replace(/\s/g, '_')}.png`;
+                                                link.href = canvas.toDataURL('image/png');
+                                                link.click();
+                                            }}>
+                                                <FaDownload /> Download Certificate
+                                            </button>
+                                            <button className="cert-modal-close" onClick={() => setShowCertModal(false)}>
+                                                <FaTimes />
+                                            </button>
+                                        </div>
+
+                                        {/* Certificate Preview */}
+                                        <div className="cert-preview" ref={certRef}>
+                                            <div className="cert-border">
+                                                <div className="cert-inner">
+                                                    <div className="cert-corner tl" />
+                                                    <div className="cert-corner tr" />
+                                                    <div className="cert-corner bl" />
+                                                    <div className="cert-corner br" />
+
+                                                    <div className="cert-header-badge">TENSHIRO COMMUNICATION INTELLIGENCE</div>
+                                                    <h1 className="cert-title">Certificate of Achievement</h1>
+                                                    <p className="cert-subtitle">This certificate is proudly presented to</p>
+                                                    <h2 className="cert-name">{user?.name || 'Student'}</h2>
+                                                    <div className="cert-separator" />
+                                                    <p className="cert-body">
+                                                        For successfully completing the Communication Intelligence Assessment Program
+                                                        and achieving <strong>{getLevel(overallReadiness)}</strong> level proficiency in professional communication.
+                                                    </p>
+
+                                                    <div className="cert-scores-row">
+                                                        <div className="cert-score-box">
+                                                            <div className="csb-value">{quizScore}%</div>
+                                                            <div className="csb-label">Communication Quiz</div>
+                                                        </div>
+                                                        <div className="cert-score-box">
+                                                            <div className="csb-value">{speakingScore}%</div>
+                                                            <div className="csb-label">AI Speaking</div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div className="cert-overall">
+                                                        <div className="cert-overall-circle">
+                                                            <span className="coc-val">{overallReadiness}%</span>
+                                                        </div>
+                                                        <span className="cert-overall-label">OVERALL READINESS</span>
+                                                    </div>
+
+                                                    <div className="cert-level-badge">
+                                                        <FaStar /> {getLevel(overallReadiness).toUpperCase()} <FaStar />
+                                                    </div>
+
+                                                    <div className="cert-date">
+                                                        Issued on {new Date().toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' })}
+                                                    </div>
+                                                    <div className="cert-footer-text">
+                                                        Tenshiro Communication Intelligence Lab · AI-Proctored Assessment
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    )}
                 </motion.div>
             ) : (
                 <div className="section-view">
-                    <div className="section-header-row">
-                        <button className="back-btn-lab" onClick={() => { setActiveSection(null); setSearchQuery(''); }}>
-                            <FaArrowLeft /> Dashboard
-                        </button>
-                        {['courses', 'youtube', 'resources', 'pdf'].includes(activeSection) && (
-                            <div className="search-bar-modern">
-                                <FaSearch />
-                                <input
-                                    type="text"
-                                    placeholder="Search in this module..."
-                                    value={searchQuery}
-                                    onChange={(e) => setSearchQuery(e.target.value)}
-                                />
+                    {['comm-quiz', 'ai-speaking'].includes(activeSection) ? (
+                        <CommunicationTestRunner testId={activeSection} onBack={() => setActiveSection(null)} />
+                    ) : (
+                        <>
+                            <div className="section-header-row">
+                                <button className="back-btn-lab" onClick={() => { setActiveSection(null); setSearchQuery(''); }}>
+                                    <FaArrowLeft /> Dashboard
+                                </button>
+                                {['courses', 'youtube', 'resources'].includes(activeSection) && (
+                                    <div className="search-bar-modern">
+                                        <FaSearch />
+                                        <input
+                                            type="text"
+                                            placeholder="Search in this module..."
+                                            value={searchQuery}
+                                            onChange={(e) => setSearchQuery(e.target.value)}
+                                        />
+                                    </div>
+                                )}
                             </div>
-                        )}
-                    </div>
 
-                    <AnimatePresence mode="wait">
-                        <motion.div key={activeSection} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
-                            {activeSection === 'grammar-learn' && (
+                            <AnimatePresence mode="wait">
+                                <motion.div key={activeSection} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
+
+                                    {/* ─── Grammar Learn ─── */}
+                                    {activeSection === 'grammar-learn' && (
                                 <div className="grammar-learning-view">
                                     {!selectedTopic ? (
                                         <>
@@ -371,7 +558,6 @@ const CommunicationIntelligenceLab = () => {
                                         </>
                                     ) : (
                                         <div className="w3-lesson-view">
-                                            {/* Subtopic Sidebar */}
                                             <div className="w3-sidebar">
                                                 <div className="w3-sidebar-header">
                                                     <button className="w3-back-btn" onClick={() => setSelectedTopic(null)}>
@@ -391,13 +577,10 @@ const CommunicationIntelligenceLab = () => {
                                                     ))}
                                                 </div>
                                             </div>
-
-                                            {/* Main Content Area */}
                                             <div className="w3-main-content">
                                                 {selectedTopic.subtopics && selectedTopic.subtopics[selectedSubtopicIndex] ? (
                                                     <div className="w3-content-inner">
                                                         <h1 className="w3-lesson-title">{selectedTopic.subtopics[selectedSubtopicIndex].title}</h1>
-
                                                         {selectedTopic.subtopics[selectedSubtopicIndex].structure && (
                                                             <div className="w3-syntax-box">
                                                                 <h4>Structure / Syntax</h4>
@@ -406,11 +589,9 @@ const CommunicationIntelligenceLab = () => {
                                                                 </div>
                                                             </div>
                                                         )}
-
                                                         <div className="w3-explanation">
                                                             <p>{selectedTopic.subtopics[selectedSubtopicIndex].explanation}</p>
                                                         </div>
-
                                                         {selectedTopic.subtopics[selectedSubtopicIndex].examples && selectedTopic.subtopics[selectedSubtopicIndex].examples.length > 0 && (
                                                             <div className="w3-example-box">
                                                                 <h4>Examples</h4>
@@ -421,8 +602,6 @@ const CommunicationIntelligenceLab = () => {
                                                                 </ul>
                                                             </div>
                                                         )}
-
-                                                        {/* Bottom Navigation */}
                                                         <div className="w3-bottom-nav">
                                                             <button
                                                                 className="w3-btn prev-btn"
@@ -439,8 +618,6 @@ const CommunicationIntelligenceLab = () => {
                                                                 Next <FaArrowLeft style={{ transform: 'rotate(180deg)' }} />
                                                             </button>
                                                         </div>
-
-                                                        {/* Practice & Resources at the very bottom */}
                                                         {(selectedTopic.practiceLink || selectedTopic.resourceLink) && (
                                                             <div className="w3-extra-resources">
                                                                 <h4>Extra Mastery Materials</h4>
@@ -468,9 +645,9 @@ const CommunicationIntelligenceLab = () => {
                                 </div>
                             )}
 
+                            {/* ─── Grammar Practice ─── */}
                             {activeSection === 'grammar-practice' && (
                                 <div className="grammar-practice-view">
-                                    {/* Step 1 — Topic Picker */}
                                     {!practiceTopicSelected && !mockTestActive && !mockTestSubmitted && (
                                         <>
                                             <h2 className="section-title-premium">Grammar Practice</h2>
@@ -499,7 +676,6 @@ const CommunicationIntelligenceLab = () => {
                                         </>
                                     )}
 
-                                    {/* Step 2 — Topic Detail: Practice Links + Start Quiz */}
                                     {practiceTopicSelected && !mockTestActive && !mockTestSubmitted && (
                                         <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="practice-detail-view">
                                             <button className="back-btn-lab" onClick={() => setPracticeTopicSelected(null)}>
@@ -507,8 +683,6 @@ const CommunicationIntelligenceLab = () => {
                                             </button>
                                             <h2 className="section-title-premium" style={{ marginTop: '1rem' }}>{practiceTopicSelected.title}</h2>
                                             <p className="practice-subtitle">{practiceTopicSelected.description}</p>
-
-                                            {/* External Practice Links */}
                                             <div className="practice-links-section">
                                                 <h3><FaLink /> Practice on These Sites</h3>
                                                 <div className="ext-links-grid">
@@ -532,7 +706,7 @@ const CommunicationIntelligenceLab = () => {
                                                             <FaExternalLinkAlt className="elc-arrow" />
                                                         </a>
                                                     )}
-                                                    <a href={`https://www.perfect-english-grammar.com/`} target="_blank" rel="noreferrer" className="ext-link-card purple">
+                                                    <a href="https://www.perfect-english-grammar.com/" target="_blank" rel="noreferrer" className="ext-link-card purple">
                                                         <div className="elc-icon"><FaChalkboardTeacher /></div>
                                                         <div>
                                                             <div className="elc-title">Perfect English Grammar</div>
@@ -540,7 +714,7 @@ const CommunicationIntelligenceLab = () => {
                                                         </div>
                                                         <FaExternalLinkAlt className="elc-arrow" />
                                                     </a>
-                                                    <a href={`https://learnenglish.britishcouncil.org/grammar`} target="_blank" rel="noreferrer" className="ext-link-card orange">
+                                                    <a href="https://learnenglish.britishcouncil.org/grammar" target="_blank" rel="noreferrer" className="ext-link-card blue">
                                                         <div className="elc-icon"><FaBookOpen /></div>
                                                         <div>
                                                             <div className="elc-title">British Council Grammar</div>
@@ -550,8 +724,6 @@ const CommunicationIntelligenceLab = () => {
                                                     </a>
                                                 </div>
                                             </div>
-
-                                            {/* Start Mock Test */}
                                             <div className="mock-cta-section">
                                                 <div className="mock-cta-info">
                                                     <FaTrophy className="mock-cta-icon" />
@@ -571,7 +743,6 @@ const CommunicationIntelligenceLab = () => {
                                         </motion.div>
                                     )}
 
-                                    {/* Step 3 — Mock Test */}
                                     {mockTestActive && !mockTestSubmitted && (
                                         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mock-test-view">
                                             <div className="mock-test-header">
@@ -587,7 +758,6 @@ const CommunicationIntelligenceLab = () => {
                                                 <div className="mock-progress-fill" style={{ width: `${(Object.keys(mockTestAnswers).length / mockTestQuestions.length) * 100}%` }} />
                                             </div>
                                             <p className="mock-progress-text">{Object.keys(mockTestAnswers).length} / {mockTestQuestions.length} answered</p>
-
                                             <div className="mock-questions-list">
                                                 {mockTestQuestions.map((q, idx) => (
                                                     <div key={q.id} className="mock-question-card">
@@ -616,7 +786,6 @@ const CommunicationIntelligenceLab = () => {
                                         </motion.div>
                                     )}
 
-                                    {/* Step 4 — Score Summary */}
                                     {mockTestSubmitted && (
                                         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mock-score-view">
                                             <div className="score-badge-big">
@@ -626,7 +795,6 @@ const CommunicationIntelligenceLab = () => {
                                                     {getMockScore() >= 8 ? '🏆 Excellent!' : getMockScore() >= 6 ? '👍 Good job!' : getMockScore() >= 4 ? '📚 Keep Practicing!' : '💪 Try Again!'}
                                                 </div>
                                             </div>
-
                                             <div className="score-review-list">
                                                 {mockTestQuestions.map((q, idx) => {
                                                     const userAns = mockTestAnswers[q.id];
@@ -649,7 +817,6 @@ const CommunicationIntelligenceLab = () => {
                                                     );
                                                 })}
                                             </div>
-
                                             <div className="score-actions">
                                                 <button className="score-retry-btn" onClick={() => fetchTopicQuiz(practiceTopicSelected.id)}>
                                                     <FaRedo /> Retry Test
@@ -663,6 +830,7 @@ const CommunicationIntelligenceLab = () => {
                                 </div>
                             )}
 
+                            {/* ─── Courses ─── */}
                             {activeSection === 'courses' && (() => {
                                 const platforms = ['All', 'Coursera', 'Udemy', 'LinkedIn Learning', 'edX', 'Harvard Online', 'FutureLearn', 'NPTEL', 'Alison', 'Skillshare', 'Google', 'Swayam'];
                                 const levels = ['All', 'Beginner', 'Intermediate', 'Advanced', 'All Levels'];
@@ -690,8 +858,6 @@ const CommunicationIntelligenceLab = () => {
                                                 <p className="practice-subtitle">{filtered.length} curated courses from world's top learning platforms</p>
                                             </div>
                                         </div>
-
-                                        {/* Platform Filter Pills */}
                                         <div className="course-filter-block">
                                             <div className="filter-label">Platform</div>
                                             <div className="platform-pills">
@@ -702,99 +868,68 @@ const CommunicationIntelligenceLab = () => {
                                                 ))}
                                             </div>
                                         </div>
-
-                                        {/* Level Filter */}
                                         <div className="course-filter-block">
                                             <div className="filter-label">Level</div>
-                                            <div className="level-pills">
-                                                {levels.map(lv => (
-                                                    <button key={lv} className={`level-pill ${activeLevel === lv ? 'active' : ''}`} onClick={() => setActiveLevel(lv)}>{lv}</button>
+                                            <div className="platform-pills">
+                                                {levels.map(l => (
+                                                    <button key={l} className={`platform-pill ${activeLevel === l ? 'active' : ''}`} onClick={() => setActiveLevel(l)}>{l}</button>
                                                 ))}
                                             </div>
                                         </div>
-
-                                        {/* Course Cards Grid */}
                                         <div className="courses-premium-grid">
                                             {filtered.map((c, idx) => (
                                                 <motion.a
-                                                    key={c.id}
-                                                    href={c.link}
-                                                    target="_blank"
-                                                    rel="noreferrer"
-                                                    className="course-premium-card"
-                                                    initial={{ opacity: 0, y: 16 }}
-                                                    animate={{ opacity: 1, y: 0 }}
-                                                    transition={{ delay: Math.min(idx * 0.02, 0.5) }}
-                                                    whileHover={{ y: -5 }}
-                                                    style={{ '--platform-color': platformColors[c.platform] || '#d4af37' }}
+                                                    key={c.id} href={c.link} target="_blank" rel="noreferrer" className="course-premium-card"
+                                                    initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: Math.min(idx * 0.02, 0.5) }}
                                                 >
-                                                    <div className="cpc-top-bar" />
                                                     <div className="cpc-header">
-                                                        <span className="cpc-platform" style={{ color: platformColors[c.platform] || '#d4af37' }}>{c.platform}</span>
-                                                        <span className={`cpc-level level-${c.level.toLowerCase().replace(/\s+/g, '-')}`}>{c.level}</span>
+                                                        <span className="cpc-platform" style={{ background: `${platformColors[c.platform] || '#6366f1'}18`, color: platformColors[c.platform] || '#6366f1' }}>{c.platform}</span>
+                                                        <span className="cpc-level">{c.level}</span>
                                                     </div>
                                                     <h4 className="cpc-title">{c.title}</h4>
-                                                    <div className="cpc-category">{c.category}</div>
-                                                    <div className="cpc-meta">
-                                                        <span className="cpc-rating">
-                                                            <span className="stars">{renderStars(c.rating)}</span>
-                                                            <span className="rating-num">{c.rating}</span>
-                                                        </span>
-                                                        <span className="cpc-dot">·</span>
-                                                        <span className="cpc-students">{c.students}</span>
-                                                    </div>
+                                                    <p className="cpc-desc">{c.description}</p>
                                                     <div className="cpc-footer">
-                                                        <span className="cpc-duration">⏱ {c.duration}</span>
+                                                        <span className="cpc-stars">{renderStars(c.rating || 4.5)}</span>
                                                         <span className="cpc-enroll">Enroll Free <FaExternalLinkAlt /></span>
                                                     </div>
                                                 </motion.a>
                                             ))}
                                         </div>
-
-                                        {filtered.length === 0 && (
-                                            <div className="courses-empty">
-                                                <FaSearch style={{ fontSize: '3rem', opacity: 0.3 }} />
-                                                <p>No courses found. Try a different search or filter.</p>
-                                            </div>
-                                        )}
                                     </div>
                                 );
                             })()}
 
-
+                            {/* ─── YouTube ─── */}
                             {activeSection === 'youtube' && (() => {
-                                const topicsFilter = ['All', 'Spoken English', 'Grammar', 'Business English', 'Interview Prep', 'Soft Skills', 'Fluency', 'Pronunciation', 'Public Speaking'];
+                                const topicFilters = ['All', 'Pronunciation', 'Grammar', 'Business English', 'Interview', 'Vocabulary', 'Fluency', 'IELTS', 'Spoken English'];
                                 const filtered = videos.filter(v => {
-                                    const matchSearch = !searchQuery || v.title.toLowerCase().includes(searchQuery.toLowerCase()) || v.channel.toLowerCase().includes(searchQuery.toLowerCase());
+                                    const matchSearch = !searchQuery || v.title.toLowerCase().includes(searchQuery.toLowerCase());
                                     const matchTopic = activeTopic === 'All' || v.topic === activeTopic;
                                     return matchSearch && matchTopic;
                                 });
                                 return (
                                     <div className="youtube-premium-view">
-                                        <div className="section-header-flex">
-                                            <h2 className="section-title-premium">YouTube Learning Hub <span className="item-count">({filtered.length})</span></h2>
-                                        </div>
+                                        <h2 className="section-title-premium">YouTube Learning Hub <span className="item-count">({filtered.length})</span></h2>
                                         <div className="topic-pills-row">
-                                            {topicsFilter.map(t => (
+                                            {topicFilters.map(t => (
                                                 <button key={t} className={`topic-pill ${activeTopic === t ? 'active' : ''}`} onClick={() => setActiveTopic(t)}>{t}</button>
                                             ))}
                                         </div>
-                                        <div className="video-premium-grid">
+                                        <div className="youtube-premium-grid">
                                             {filtered.map((v, idx) => (
                                                 <motion.a
-                                                    key={v.id} href={v.link} target="_blank" rel="noreferrer" className="video-premium-card"
+                                                    key={v.id} href={v.link} target="_blank" rel="noreferrer" className="yt-premium-card"
                                                     initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: Math.min(idx * 0.02, 0.4) }}
                                                 >
-                                                    <div className="vp-thumb" style={{ backgroundImage: `url(${v.thumbnail})` }}>
-                                                        <div className="vp-play-bg"><FaPlayCircle /></div>
-                                                        <div className="vp-duration">{v.duration}</div>
+                                                    <div className="yt-thumb-wrapper">
+                                                        <img src={v.thumbnail} alt={v.title} className="yt-thumb" onError={e => { e.target.src = 'https://via.placeholder.com/320x180/1e293b/6366f1?text=Video'; }} />
+                                                        <div className="yt-play-overlay"><FaPlayCircle /></div>
+                                                        {v.duration && <span className="yt-duration">{v.duration}</span>}
                                                     </div>
-                                                    <div className="vp-info">
-                                                        <span className="vp-topic">{v.topic}</span>
-                                                        <h4 className="vp-title">{v.title}</h4>
-                                                        <div className="vp-footer">
-                                                            <span className="vp-channel">{v.channel}</span>
-                                                        </div>
+                                                    <div className="yt-info">
+                                                        <span className="yt-topic-badge">{v.topic}</span>
+                                                        <h4 className="yt-title">{v.title}</h4>
+                                                        <span className="yt-channel">{v.channel}</span>
                                                     </div>
                                                 </motion.a>
                                             ))}
@@ -803,6 +938,7 @@ const CommunicationIntelligenceLab = () => {
                                 );
                             })()}
 
+                            {/* ─── Resources ─── */}
                             {activeSection === 'resources' && (() => {
                                 const categoriesFilter = ['All', 'Grammar', 'Speaking', 'Writing', 'Listening', 'Vocabulary', 'Test Prep', 'Practice'];
                                 const filtered = resources.filter(r => {
@@ -838,240 +974,18 @@ const CommunicationIntelligenceLab = () => {
                                 );
                             })()}
 
-                            {activeSection === 'pdf' && (() => {
-                                const topicsPdfFilter = ['All', 'Grammar', 'Speaking', 'Writing', 'Interview', 'Exam Prep', 'Vocabulary'];
-                                const filtered = pdfs.filter(p => {
-                                    const matchSearch = !searchQuery || p.title.toLowerCase().includes(searchQuery.toLowerCase()) || p.description.toLowerCase().includes(searchQuery.toLowerCase());
-                                    const matchTopic = activePdfTopic === 'All' || p.topic === activePdfTopic;
-                                    return matchSearch && matchTopic;
-                                });
-                                return (
-                                    <div className="pdf-premium-view">
-                                        <h2 className="section-title-premium">PDF Materials <span className="item-count">({filtered.length})</span></h2>
-                                        <div className="topic-pills-row">
-                                            {topicsPdfFilter.map(t => (
-                                                <button key={t} className={`topic-pill ${activePdfTopic === t ? 'active' : ''}`} onClick={() => setActivePdfTopic(t)}>{t}</button>
-                                            ))}
-                                        </div>
-                                        <div className="pdf-premium-grid">
-                                            {filtered.map((p, idx) => (
-                                                <motion.a
-                                                    key={p.id} href={p.link} target="_blank" rel="noreferrer" className="pdf-premium-card"
-                                                    initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: Math.min(idx * 0.01, 0.3) }}
-                                                >
-                                                    <div className="pp-icon"><FaFilePdf /></div>
-                                                    <div className="pp-content">
-                                                        <span className="pp-topic">{p.topic}</span>
-                                                        <h4 className="pp-title">{p.title}</h4>
-                                                        <p className="pp-desc">{p.description}</p>
-                                                    </div>
-                                                    <div className="pp-download"><FaArrowDown /></div>
-                                                </motion.a>
-                                            ))}
-                                        </div>
-                                    </div>
-                                );
-                            })()}
-
-
-                            {/* AI Modules */}
-                            {activeSection === 'speaking' && (
-                                <div className="speaking-lab-view">
-                                    <h2 className="section-title-premium">AI Speaking Practice</h2>
-                                    <div className="speaking-console">
-                                        <div className="mic-container">
-                                            <motion.div
-                                                className={`mic-ring ${isRecording ? 'active' : ''}`}
-                                                onClick={isRecording ? stopRecording : startRecording}
-                                                whileHover={{ scale: 1.05 }}
-                                                whileTap={{ scale: 0.95 }}
-                                            >
-                                                {isRecording ? <FaRobot size={40} className="pulse-icon" /> : <FaMicrophone size={40} />}
-                                            </motion.div>
-                                            <p>{isRecording ? 'Listening... click to stop' : 'Click microphone to start speaking'}</p>
-                                        </div>
-
-                                        <div className="transcript-box">
-                                            <div className="box-header"><FaVolumeUp /> Live Transcript</div>
-                                            <div className="box-content">{recordedText || "Your words will appear here..."}</div>
-                                        </div>
-
-                                        {loading && isRecording === false && recordedText && (
-                                            <div className="analysis-loader">Analyzing your speech patterns...</div>
-                                        )}
-
-                                        {speechAnalysis && (
-                                            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="analysis-results">
-                                                <div className="score-cards">
-                                                    <div className="s-card"><span className="label">Pronunciation</span><span className="value">{speechAnalysis.pronunciation}%</span></div>
-                                                    <div className="s-card"><span className="label">Fluency</span><span className="value">{speechAnalysis.fluency}%</span></div>
-                                                    <div className="s-card"><span className="label">Confidence</span><span className="value">{speechAnalysis.confidence}%</span></div>
-                                                </div>
-                                                <div className="feedback-box">
-                                                    <h4><FaLightbulb /> AI Feedback</h4>
-                                                    <p>{speechAnalysis.feedback}</p>
-                                                    {speechAnalysis.grammarFixes && speechAnalysis.grammarFixes.length > 0 && (
-                                                        <div className="grammar-fixes">
-                                                            <strong>Corrections:</strong>
-                                                            <ul>
-                                                                {speechAnalysis.grammarFixes.map((fix, i) => <li key={i}>{fix}</li>)}
-                                                            </ul>
-                                                        </div>
-                                                    )}
-                                                </div>
-                                            </motion.div>
-                                        )}
-                                    </div>
-                                </div>
+                            {activeSection === 'test-runner' && (
+                                <CommunicationTestRunner />
                             )}
 
-                            {['chat', 'interview', 'tutor'].includes(activeSection) && (
-                                <div className="ai-chat-view">
-                                    <div className="ai-chat-header">
-                                        <h2 className="section-title-premium m-0">{sections.find(s => s.id === activeSection)?.title}</h2>
-                                        {activeSection === 'interview' && (
-                                            <div className="role-selector">
-                                                <button className={currentRole === 'hr' ? 'active' : ''} onClick={() => setCurrentRole('hr')}>HR Manager</button>
-                                                <button className={currentRole === 'tech' ? 'active' : ''} onClick={() => setCurrentRole('tech')}>Tech Lead</button>
-                                                <button className={currentRole === 'manager' ? 'active' : ''} onClick={() => setCurrentRole('manager')}>Executive</button>
-                                            </div>
-                                        )}
-                                    </div>
-
-                                    <div className="chat-interface">
-                                        <div className="chat-messages">
-                                            {messages.length === 0 && (
-                                                <div className="chat-empty-state">
-                                                    <FaRobot size={48} />
-                                                    <h3>Ready when you are</h3>
-                                                    <p>
-                                                        {activeSection === 'chat' ? "Practice casual conversations, introducing yourself, or talking about hobbies." :
-                                                            activeSection === 'interview' ? "Let's begin your mock interview. I will ask questions and evaluate your communication." :
-                                                                "I'm your live AI tutor. I'll correct your grammar gently and suggest better professional phrasing."}
-                                                    </p>
-                                                </div>
-                                            )}
-                                            {messages.map((msg, idx) => (
-                                                <div key={idx} className={`chat-message ${msg.role}`}>
-                                                    <div className="msg-avatar">{msg.role === 'assistant' ? <FaRobot /> : <FaUserTie />}</div>
-                                                    <div className="msg-bubble">{msg.content}</div>
-                                                </div>
-                                            ))}
-                                            {chatLoading && (
-                                                <div className="chat-message assistant">
-                                                    <div className="msg-avatar"><FaRobot /></div>
-                                                    <div className="msg-bubble typing"><span></span><span></span><span></span></div>
-                                                </div>
-                                            )}
-                                            <div ref={chatEndRef} />
-                                        </div>
-                                        <form className="chat-input-area" onSubmit={(e) => handleSendMessage(e, activeSection)}>
-                                            <input
-                                                type="text"
-                                                placeholder="Type your response..."
-                                                value={chatInput}
-                                                onChange={e => setChatInput(e.target.value)}
-                                                disabled={chatLoading}
-                                            />
-                                            <button type="submit" disabled={chatLoading || !chatInput.trim()}>Send</button>
-                                        </form>
-                                    </div>
-                                </div>
-                            )}
-
-                            {activeSection === 'tracker' && (
-                                <div className="progress-tracker-view">
-                                    <h2 className="section-title-premium">Learning Progress Tracker</h2>
-                                    <p className="tracker-subtitle">Monitor your communication improvements over time</p>
-
-                                    <div className="metrics-overview">
-                                        <div className="metric-box">
-                                            <div className="m-icon" style={{ color: '#6366f1' }}><FaChalkboardTeacher /></div>
-                                            <div className="m-info">
-                                                <span>Grammar Accuracy</span>
-                                                <h3>85%</h3>
-                                            </div>
-                                        </div>
-                                        <div className="metric-box">
-                                            <div className="m-icon" style={{ color: '#1A3263' }}><FaMicrophone /></div>
-                                            <div className="m-info">
-                                                <span>Speaking Fluency</span>
-                                                <h3>78%</h3>
-                                            </div>
-                                        </div>
-                                        <div className="metric-box">
-                                            <div className="m-icon" style={{ color: '#f59e0b' }}><FaBookOpen /></div>
-                                            <div className="m-info">
-                                                <span>Vocabulary Growth</span>
-                                                <h3>+120 words</h3>
-                                            </div>
-                                        </div>
-                                        <div className="metric-box">
-                                            <div className="m-icon" style={{ color: '#ec4899' }}><FaChartLine /></div>
-                                            <div className="m-info">
-                                                <span>Comm. Confidence</span>
-                                                <h3>92%</h3>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div className="charts-container">
-                                        <div className="chart-wrapper">
-                                            <h3>Weekly Performance Trend</h3>
-                                            <div className="mock-css-chart">
-                                                <div className="bar-group">
-                                                    <div className="bar" style={{ height: '40%', background: '#6366f1' }}></div>
-                                                    <span>Week 1</span>
-                                                </div>
-                                                <div className="bar-group">
-                                                    <div className="bar" style={{ height: '60%', background: '#6366f1' }}></div>
-                                                    <span>Week 2</span>
-                                                </div>
-                                                <div className="bar-group">
-                                                    <div className="bar" style={{ height: '55%', background: '#6366f1' }}></div>
-                                                    <span>Week 3</span>
-                                                </div>
-                                                <div className="bar-group">
-                                                    <div className="bar" style={{ height: '80%', background: '#6366f1' }}></div>
-                                                    <span>Week 4</span>
-                                                </div>
-                                                <div className="bar-group">
-                                                    <div className="bar" style={{ height: '85%', background: '#6366f1' }}></div>
-                                                    <span>Week 5</span>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div className="chart-wrapper">
-                                            <h3>Skill Distribution</h3>
-                                            <div className="mock-skills-list">
-                                                <div className="skill-row">
-                                                    <span>Pronunciation</span>
-                                                    <div className="progress-bg"><div className="progress-fill" style={{ width: '75%', background: '#1A3263' }}></div></div>
-                                                </div>
-                                                <div className="skill-row">
-                                                    <span>Sentence Structure</span>
-                                                    <div className="progress-bg"><div className="progress-fill" style={{ width: '85%', background: '#3b82f6' }}></div></div>
-                                                </div>
-                                                <div className="skill-row">
-                                                    <span>Professional Tone</span>
-                                                    <div className="progress-bg"><div className="progress-fill" style={{ width: '90%', background: '#8b5cf6' }}></div></div>
-                                                </div>
-                                                <div className="skill-row">
-                                                    <span>Vocabulary</span>
-                                                    <div className="progress-bg"><div className="progress-fill" style={{ width: '65%', background: '#f59e0b' }}></div></div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            )}
                         </motion.div>
                     </AnimatePresence>
-                </div>
+                </>
             )}
         </div>
-    );
+    )}
+</div>
+);
 };
 
 export default CommunicationIntelligenceLab;

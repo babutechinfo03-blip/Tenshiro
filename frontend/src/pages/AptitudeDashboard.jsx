@@ -16,7 +16,8 @@ import AptLearnMode from '../components/aptitude/AptLearnMode';
 import AptAnalytics from '../components/aptitude/AptAnalytics';
 import { CareerNavigator } from '../components/aptitude/CareerNavigator';
 
-
+import { ProctoringProvider } from '../context/ProctoringContext';
+import ProctoredExamWrapper from '../components/aptitude/ProctoredExamWrapper';
 
 import { useLanguage } from '../context/LanguageContext';
 
@@ -134,14 +135,12 @@ const AptitudeDashboard = () => {
     }
 
     return (
-        <div className="apt-container">
-            <style>{`
-                .apt-container { 
-                    min-height: 100vh; 
+        <ProctoringProvider>
+            <div className="apt-container">
+                <style>{`
+                    .apt-container { 
+                        min-height: 100vh; 
                     background: var(--bg-primary);
-                    background-image: 
-                        radial-gradient(at 0% 0%, var(--primary-glow, transparent) 0px, transparent 50%),
-                        radial-gradient(at 50% 0%, rgba(129, 140, 248, 0.05) 0px, transparent 50%);
                     color: var(--text-main); 
                     font-family: 'Outfit', sans-serif; 
                     padding-bottom: 5rem; 
@@ -167,14 +166,14 @@ const AptitudeDashboard = () => {
                 <>
                     <nav className="apt-navbar">
                         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                            <div style={{ background: 'linear-gradient(135deg, #6366f1, #a855f7)', width: 40, height: 40, borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.25rem', fontWeight: 900 }}>A</div>
-                            <h1 style={{ fontSize: '1.25rem', fontWeight: 900, letterSpacing: -0.5 }}>{t('aptitude.osTitle').split(' ')[0]} <span style={{ color: '#6366f1' }}>{t('aptitude.osTitle').split(' ')[1]}</span></h1>
+                            <div style={{ background: '#1e293b', width: 40, height: 40, borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.25rem', fontWeight: 900, color: '#fff' }}>A</div>
+                            <h1 style={{ fontSize: '1.25rem', fontWeight: 900, letterSpacing: -0.5 }}>{t('aptitude.osTitle').split(' ')[0]} <span style={{ color: '#3b82f6' }}>{t('aptitude.osTitle').split(' ')[1]}</span></h1>
                         </div>
 
                         <div style={{ display: 'flex', gap: '2rem' }}>
                             {PIPELINE_STEPS.map(step => (
                                 <button key={step.id} onClick={() => setActiveTab(step.id)}
-                                    style={{ border: 'none', background: 'transparent', color: activeTab === step.id ? '#6366f1' : 'var(--text-muted)', fontWeight: 800, fontSize: '0.85rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8, transition: 'all 0.2s' }}>
+                                    style={{ border: 'none', background: 'transparent', color: activeTab === step.id ? '#3b82f6' : 'var(--text-muted)', fontWeight: 800, fontSize: '0.85rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8, transition: 'all 0.2s' }}>
                                     <span style={{ fontSize: '1.1rem' }}>{step.icon}</span> {t(`aptitude.steps.${step.id}`)}
                                 </button>
                             ))}
@@ -198,7 +197,7 @@ const AptitudeDashboard = () => {
                                         <SH c="🎓" t={t('aptitude.adaptiveMastery')} s={t('aptitude.adaptiveSubtitle')} />
                                         <div style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)', borderRadius: 24, padding: '2rem' }}>
                                             <p style={{ color: 'var(--text-muted)', lineHeight: 1.6 }}>{t('aptitude.adaptiveWelcome', { defaultValue: 'Welcome to your personalized cockpit. Based on your current progress, we recommend focusing on your weak areas today.' })}</p>
-                                            <button onClick={() => setActiveTab('learn')} style={{ marginTop: '1rem', padding: '0.8rem 1.5rem', borderRadius: 12, border: 'none', background: '#6366f1', color: '#fff', fontWeight: 800, cursor: 'pointer' }}>{t('aptitude.resumeLearning')}</button>
+                                            <button onClick={() => setActiveTab('learn')} style={{ marginTop: '1rem', padding: '0.8rem 1.5rem', borderRadius: 12, border: 'none', background: '#1e293b', color: '#fff', fontWeight: 800, cursor: 'pointer' }}>{t('aptitude.resumeLearning')}</button>
                                         </div>
                                     </div>
                                     <GamificationPanel perf={perf} radar={radarData} />
@@ -231,13 +230,14 @@ const AptitudeDashboard = () => {
             )}
 
             {view === 'test' && (
-                <div style={{ padding: '2rem', maxWidth: 1000, margin: '0 auto', animation: 'fadeInUp 0.4s ease' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '2rem' }}>
-                        <button onClick={() => setView('main')} style={{ padding: '0.6rem 1.2rem', borderRadius: 12, border: '1px solid var(--border)', background: 'transparent', color: 'var(--text-muted)', cursor: 'pointer', fontWeight: 700 }}>← Exit Session</button>
-                        <h2 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900 }}>{testConfig?.catLabel || 'Practice Session'}</h2>
+                <ProctoredExamWrapper config={testConfig} onCancel={() => setView('main')}>
+                    <div style={{ padding: '2rem', maxWidth: 1000, margin: '0 auto', animation: 'fadeInUp 0.4s ease' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '2rem' }}>
+                            <h2 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900 }}>{testConfig?.catLabel || 'Practice Session'}</h2>
+                        </div>
+                        <TestEngine config={testConfig} onFinish={handleTestFinish} />
                     </div>
-                    <TestEngine config={testConfig} onFinish={handleTestFinish} />
-                </div>
+                </ProctoredExamWrapper>
             )}
 
             {view === 'result' && (
@@ -246,6 +246,7 @@ const AptitudeDashboard = () => {
                 </div>
             )}
         </div>
+        </ProctoringProvider>
     );
 };
 

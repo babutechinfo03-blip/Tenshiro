@@ -115,7 +115,7 @@ export const CareerNavigator = ({ perf, radar, activeTab }) => {
                     {/* Proactive Insights Ribbon */}
                     <div style={{ padding: '0.75rem 1.5rem', background: 'rgba(255, 255, 255, 0.03)', borderBottom: '1px solid rgba(255, 255, 255, 0.05)', display: 'flex', gap: 10, overflowX: 'auto' }} className="custom-scroll-hidden">
                         <div style={{ whiteSpace: 'nowrap', padding: '4px 10px', borderRadius: 8, background: '#6366f115', border: '1px solid #6366f130', fontSize: '0.65rem', color: '#6366f1', fontWeight: 800 }}>⚡ Eligibility: High</div>
-                        <div style={{ whiteSpace: 'nowrap', padding: '4px 10px', borderRadius: 8, background: '#f59e0b15', border: '1px solid #f59e0b30', fontSize: '0.65rem', color: '#f59e0b', fontWeight: 800 }}>🎯 Target: Amazon</div>
+                        <div style={{ whiteSpace: 'nowrap', padding: '4px 10px', borderRadius: 8, background: '#1A326315', border: '1px solid #1A326330', fontSize: '0.65rem', color: '#1A3263', fontWeight: 800 }}>🎯 Target: Amazon</div>
                         <div style={{ whiteSpace: 'nowrap', padding: '4px 10px', borderRadius: 8, background: '#1A326315', border: '1px solid #1A326330', fontSize: '0.65rem', color: '#1A3263', fontWeight: 800 }}>🚀 Streak: {perf.streak || 0}d</div>
                     </div>
 

@@ -247,8 +247,7 @@ const RegisterModal = ({ isOpen, onClose, onLoginClick }) => {
                                 fontWeight: 700,
                                 cursor: 'pointer',
                                 transition: 'all 0.3s',
-                                width: '100%',
-                                justifyContent: 'center'
+                                width: '100%'
                             }}
                             onMouseOver={(e) => e.currentTarget.style.background = 'var(--bg-secondary)'}
                             onMouseOut={(e) => e.currentTarget.style.background = 'transparent'}

@@ -23,14 +23,14 @@ const OverviewCard = ({ feature, index }) => (
         className="overview-card-outer-link"
     >
         <Motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
+            initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{
-                duration: 0.5,
-                delay: index * 0.08,
-                ease: [0.23, 1, 0.32, 1]
+                duration: 0.3,
+                delay: index * 0.04,
+                ease: "easeOut"
             }}
-            whileHover={{ y: -10, scale: 1.02 }}
+            whileHover={{ y: -5, scale: 1.02 }}
             className="overview-feature-card-elite"
             style={{
                 '--feature-color': feature?.color || '#1A3263',
@@ -98,7 +98,7 @@ const Overview = () => {
             icon: <FaComments />,
             title: 'Communication Hub',
             desc: 'Elevate your professional presence with AI feedback.',
-            color: '#f59e0b'
+            color: '#1A3263'
         },
         {
             path: '/aptitude',
@@ -146,8 +146,9 @@ const Overview = () => {
 
             <header className="overview-elite-header">
                 <Motion.div
-                    initial={{ opacity: 0, y: -20 }}
+                    initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3 }}
                     className="header-main"
                 >
                     <div className="elite-badge-container">
@@ -183,6 +184,7 @@ const Overview = () => {
                     margin: 0 auto;
                     position: relative;
                     min-height: 100vh;
+                    contain: content;
                 }
 
                 .page-background-effects {
@@ -191,6 +193,8 @@ const Overview = () => {
                     z-index: -1;
                     overflow: hidden;
                     pointer-events: none;
+                    transform: translateZ(0);
+                    will-change: transform;
                 }
 
                 .glow-orb-1 {
@@ -199,8 +203,10 @@ const Overview = () => {
                     right: -10%;
                     width: 600px;
                     height: 600px;
-                    background: radial-gradient(circle, rgba(26, 50, 99, 0.05) 0%, transparent 70%);
-                    filter: blur(80px);
+                    background: radial-gradient(circle, rgba(26, 50, 99, 0.05) 0%, transparent 60%);
+                    filter: blur(40px);
+                    will-change: transform;
+                    transform: translateZ(0);
                 }
 
                 .glow-orb-2 {
@@ -209,8 +215,10 @@ const Overview = () => {
                     left: -10%;
                     width: 500px;
                     height: 500px;
-                    background: radial-gradient(circle, rgba(99, 102, 241, 0.05) 0%, transparent 70%);
-                    filter: blur(80px);
+                    background: radial-gradient(circle, rgba(99, 102, 241, 0.05) 0%, transparent 60%);
+                    filter: blur(40px);
+                    will-change: transform;
+                    transform: translateZ(0);
                 }
 
                 .overview-elite-header {
@@ -269,6 +277,7 @@ const Overview = () => {
                     display: flex;
                     flex-direction: column;
                     align-items: center;
+                    transform: translateZ(0);
                 }
 
                 .metric-val { font-size: 1.5rem; font-weight: 900; color: var(--primary); }
@@ -283,7 +292,8 @@ const Overview = () => {
                 .overview-feature-card-elite {
                     position: relative;
                     background: var(--bg-glass);
-                    backdrop-filter: blur(50px);
+                    backdrop-filter: blur(20px);
+                    -webkit-backdrop-filter: blur(20px);
                     border: 1px solid var(--border);
                     border-radius: 36px;
                     padding: 40px;
@@ -291,7 +301,9 @@ const Overview = () => {
                     flex-direction: column;
                     gap: 28px;
                     overflow: hidden;
-                    transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+                    transition: transform 0.3s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.3s ease;
+                    will-change: transform, opacity;
+                    transform: translateZ(0);
                 }
 
                 .card-mesh-bg {
@@ -301,6 +313,7 @@ const Overview = () => {
                         radial-gradient(at 0% 0%, rgba(var(--feature-color-rgb), 0.05) 0%, transparent 50%),
                         radial-gradient(at 100% 100%, rgba(var(--feature-color-rgb), 0.05) 0%, transparent 50%);
                     z-index: 0;
+                    pointer-events: none;
                 }
 
                 .card-border-glow {
@@ -313,7 +326,8 @@ const Overview = () => {
                     -webkit-mask-composite: xor;
                     mask-composite: exclude;
                     opacity: 0;
-                    transition: opacity 0.5s;
+                    transition: opacity 0.3s ease;
+                    pointer-events: none;
                 }
 
                 .overview-feature-card-elite:hover .card-border-glow {
@@ -338,8 +352,10 @@ const Overview = () => {
                     justify-content: center;
                     color: var(--feature-color);
                     font-size: 2.2rem;
-                    transition: all 0.5s;
+                    transition: transform 0.3s ease, background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
                     box-shadow: 0 8px 16px rgba(0,0,0,0.05);
+                    will-change: transform;
+                    transform: translateZ(0);
                 }
 
                 .icon-glow {
@@ -347,20 +363,21 @@ const Overview = () => {
                     inset: -4px;
                     border-radius: 28px;
                     background: var(--feature-color);
-                    filter: blur(15px);
+                    filter: blur(10px);
                     opacity: 0;
-                    transition: opacity 0.5s;
+                    transition: opacity 0.3s ease;
+                    pointer-events: none;
                 }
 
                 .overview-feature-card-elite:hover .icon-glow {
-                    opacity: 0.2;
+                    opacity: 0.15;
                 }
 
                 .overview-feature-card-elite:hover .icon-platform-container {
                     background: var(--feature-color);
                     color: white;
-                    transform: scale(1.1) translateY(-5px);
-                    box-shadow: 0 20px 40px -10px var(--feature-color);
+                    transform: scale(1.05) translateY(-2px);
+                    box-shadow: 0 15px 30px -10px var(--feature-color);
                 }
 
                 .card-action-hint {
@@ -373,7 +390,7 @@ const Overview = () => {
                     justify-content: center;
                     color: var(--text-muted);
                     opacity: 0.4;
-                    transition: 0.3s;
+                    transition: background-color 0.3s ease, color 0.3s ease, opacity 0.3s ease;
                 }
 
                 .overview-feature-card-elite:hover .card-action-hint {
@@ -423,12 +440,13 @@ const Overview = () => {
                     border-radius: 50%;
                     background: #1A3263;
                     box-shadow: 0 0 0 rgba(26, 50, 99, 0.4);
-                    animation: pulse 2s infinite;
+                    animation: pulse 2.5s infinite;
+                    will-change: box-shadow;
                 }
 
                 @keyframes pulse {
                     0% { box-shadow: 0 0 0 0 rgba(26, 50, 99, 0.4); }
-                    70% { box-shadow: 0 0 0 10px rgba(26, 50, 99, 0); }
+                    70% { box-shadow: 0 0 0 8px rgba(26, 50, 99, 0); }
                     100% { box-shadow: 0 0 0 0 rgba(26, 50, 99, 0); }
                 }
 
@@ -441,20 +459,23 @@ const Overview = () => {
                     align-items: center;
                     justify-content: center;
                     color: var(--primary);
-                    transition: all 0.4s;
+                    transition: transform 0.3s ease, background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+                    will-change: transform;
+                    transform: translateZ(0);
                 }
 
                 .overview-feature-card-elite:hover .arrow-circle {
                     background: var(--primary);
                     color: white;
                     border-color: var(--primary);
-                    transform: rotate(-15deg) scale(1.1);
+                    transform: rotate(-10deg) scale(1.05);
                 }
 
                 .overview-card-outer-link {
                     text-decoration: none;
                     color: inherit;
                     display: block;
+                    transform: translateZ(0);
                 }
 
                 @media (max-width: 1200px) {

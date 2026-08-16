@@ -96,9 +96,12 @@ exports.pathpilotChat = async (req, res) => {
             return res.json({ reply: getFallback(message), language });
         }
 
+        const requestedLangName = LANG_META[language]?.name || 'English';
+        const activeSystemPrompt = `${SYSTEM_PROMPT}\n\nCRITICAL LANGUAGE ENFORCEMENT:\nThe user has requested the response to be in: ${requestedLangName}.\nYou MUST respond EXCLUSIVELY in this language (${requestedLangName}). Start your response with '[LANG: ${language}]'.`;
+
         const completion = await groq.chat.completions.create({
             messages: [
-                { role: "system", content: SYSTEM_PROMPT },
+                { role: "system", content: activeSystemPrompt },
                 ...history,
                 { role: "user", content: message }
             ],

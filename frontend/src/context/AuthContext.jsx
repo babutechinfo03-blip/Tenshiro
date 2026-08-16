@@ -45,7 +45,9 @@ export const AuthProvider = ({ children }) => {
         } catch (err) {
             console.error('❌ Auth: Fetch user failed:', err.response?.data || err.message);
             localStorage.removeItem('token');
+            localStorage.removeItem('user');
             delete axios.defaults.headers.common['Authorization'];
+            setUser(null);
         } finally {
             setLoading(false);
             console.log('🔐 Auth: Initialization complete.');
@@ -81,32 +83,7 @@ export const AuthProvider = ({ children }) => {
 
     return (
         <AuthContext.Provider value={{ user, login, register, logout, loading, loginWithToken }}>
-            {loading ? (
-                <div style={{
-                    height: '100vh',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    background: '#030712',
-                    color: '#f9fafb',
-                    fontFamily: 'sans-serif'
-                }}>
-                    <div className="loading-spinner" style={{
-                        width: '40px',
-                        height: '40px',
-                        border: '3px solid rgba(99, 102, 241, 0.1)',
-                        borderTop: '3px solid #6366f1',
-                        borderRadius: '50%',
-                        marginBottom: '1rem'
-                    }}></div>
-                    <p>Initializing CareerNavigator...</p>
-                    <style>{`
-                        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-                        .loading-spinner { animation: spin 1s linear infinite; }
-                    `}</style>
-                </div>
-            ) : children}
+            {children}
         </AuthContext.Provider>
     );
 };

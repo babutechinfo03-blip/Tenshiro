@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import axios from 'axios';
 import { questionBank, generateTest } from './questionBank';
+import { useProctoring } from '../../context/ProctoringContext';
 
 // Normalize a question from backend (options may be JSON string) to consistent shape
 const normalizeQ = (q, i) => ({
@@ -15,14 +16,24 @@ const normalizeQ = (q, i) => ({
 // Build local fallback questions for a given config
 const buildLocalFallback = (config) => {
     if (config.type === 'mock') {
-        const cats = ['quantitative', 'logical', 'verbal', 'dataInterpretation'];
-        const perCat = 15;
         const qs = [];
-        cats.forEach(cat => {
-            const pool = questionBank[cat] || [];
-            const shuffled = [...pool].sort(() => Math.random() - 0.5).slice(0, perCat);
-            shuffled.forEach(q => qs.push({ ...q, category: cat, marks: 1, negative_marks: 0.25 }));
-        });
+        // Use distribution from config if available, else default equal split
+        if (config.dist) {
+            Object.entries(config.dist).forEach(([cat, count]) => {
+                const pool = questionBank[cat] || [];
+                const shuffled = [...pool].sort(() => Math.random() - 0.5).slice(0, count);
+                shuffled.forEach(q => qs.push({ ...q, category: cat, marks: config.marking?.correct || 1, negative_marks: Math.abs(config.marking?.wrong || 0.25) }));
+            });
+        } else {
+            const cats = ['quantitative', 'logical', 'verbal', 'dataInterpretation', 'advanced'];
+            const totalQ = config.count || config.questions || 60;
+            const perCat = Math.ceil(totalQ / cats.length);
+            cats.forEach(cat => {
+                const pool = questionBank[cat] || [];
+                const shuffled = [...pool].sort(() => Math.random() - 0.5).slice(0, perCat);
+                shuffled.forEach(q => qs.push({ ...q, category: cat, marks: 1, negative_marks: 0.25 }));
+            });
+        }
         return qs;
     }
     const cat = config.category || 'quantitative';
@@ -49,6 +60,16 @@ export const TestEngine = ({ config, onFinish }) => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const iRef = useRef(null);
 
+    const proctoring = useProctoring();
+    const isProctoringActive = proctoring?.isProctoringActive;
+    const isTerminated = proctoring?.isTerminated;
+    const stopProctoring = proctoring?.stopProctoring;
+    const violations = proctoring?.violations || [];
+    const violationCount = proctoring?.violationCount || 0;
+    const maxViolations = proctoring?.maxViolations || 3;
+    const currentWarning = proctoring?.currentWarning;
+    const acknowledgeWarning = proctoring?.acknowledgeWarning;
+
     // Initial Load: Sync or Start Session
     useEffect(() => {
         let fallbackTimer;
@@ -61,10 +82,10 @@ export const TestEngine = ({ config, onFinish }) => {
                 setLoading(currentLoading => {
                     if (currentLoading) {
                         console.warn('AptTestEngine: Load timeout (2s). Forcing fallback.');
-                        const c = config.type === 'mock' ? 60 : (config.count || 10);
+                        const c = config.type === 'mock' ? (config.questions || 100) : (config.count || 10);
                         const fb = buildLocalFallback({ ...config, count: c });
                         setQuestions(fb);
-                        const duration = config.type === 'mock' ? 60 : (config.duration || fb.length);
+                        const duration = config.type === 'mock' ? (config.duration || 60) : (config.duration || fb.length);
                         setTime(duration * 60);
                         return false;
                     }
@@ -92,7 +113,7 @@ export const TestEngine = ({ config, onFinish }) => {
 
                 // 2. No active session, start new one
                 if (config) {
-                    const c = config.type === 'mock' ? 60 : (config.count || 10);
+                    const c = config.type === 'mock' ? (config.questions || 100) : (config.count || 10);
                     let qs = [];
                     try {
                         const resQs = await axios.get('/api/aptitude/questions', { params: { ...config, count: c } });
@@ -113,14 +134,14 @@ export const TestEngine = ({ config, onFinish }) => {
                         const end = new Date(resStart.data.endTime);
                         setTime(Math.max(0, Math.floor((end - now) / 1000)));
                     } catch (_) {
-                        const duration = config.type === 'mock' ? 60 : ((config.duration || qs.length));
+                        const duration = config.type === 'mock' ? (config.duration || 60) : ((config.duration || qs.length));
                         setTime(duration * 60);
                     }
                     setQuestions(qs);
                 }
             } catch (err) {
                 console.error('Test Engine Init Failed:', err);
-                const c = config.type === 'mock' ? 60 : (config.count || 10);
+                const c = config.type === 'mock' ? (config.questions || 100) : (config.count || 10);
                 const fb = buildLocalFallback({ ...config, count: c });
                 setQuestions(fb);
                 setTime((config.duration || fb.length) * 60);
@@ -166,14 +187,22 @@ export const TestEngine = ({ config, onFinish }) => {
         return () => clearInterval(autoSaveTimer);
     }, [ans, cur, loading, config.id, questions.length]);
 
+    // Proctoring auto-terminate check
+    useEffect(() => {
+        if (isTerminated && !isSubmitting && !modal) {
+            autoSubmit('Integrity Violation');
+        }
+    }, [isTerminated, isSubmitting, modal]);
 
-    const autoSubmit = () => {
-        if (!isSubmitting) doSubmit();
+
+    const autoSubmit = (reason = null) => {
+        if (!isSubmitting) doSubmit(reason);
     };
 
-    const doSubmit = async () => {
+    const doSubmit = async (reason = null) => {
         setIsSubmitting(true);
         clearInterval(iRef.current);
+        if (stopProctoring) stopProctoring();
 
         try {
             // Send all answers to server for calculation
@@ -192,7 +221,8 @@ export const TestEngine = ({ config, onFinish }) => {
                 catLabel: config.catLabel,
                 color: config.color || '#6366f1',
                 questions: questions,
-                ans: ans
+                ans: ans,
+                terminationReason: reason
             });
         } catch (err) {
             console.error('Submission failed', err);
@@ -203,7 +233,8 @@ export const TestEngine = ({ config, onFinish }) => {
                 score: correct,
                 totalMarks: questions.length,
                 questions: questions,
-                ans: ans
+                ans: ans,
+                terminationReason: reason
             });
         } finally {
             setIsSubmitting(false);
@@ -255,6 +286,28 @@ export const TestEngine = ({ config, onFinish }) => {
                 .sec-tab.active { background: ${config.color || '#6366f1'}; color: #fff; border-color: ${config.color || '#6366f1'}; }
             `}</style>
 
+            {/* Active Monitoring Indicators */}
+            {isProctoringActive && (
+                <div style={{ position: 'fixed', top: 20, left: '50%', transform: 'translateX(-50%)', background: '#000000cc', backdropFilter: 'blur(10px)', border: '1px solid #ffffff20', padding: '10px 20px', borderRadius: 99, display: 'flex', gap: '20px', zIndex: 1000, color: 'white', fontSize: '0.85rem', fontWeight: 700, animation: 'fadeInUp 0.5s ease', boxShadow: '0 10px 30px rgba(0,0,0,0.5)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}><div style={{ width: 8, height: 8, borderRadius: '50%', background: '#00ff00', boxShadow: '0 0 8px #00ff00' }}></div> Fullscreen Active</div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}><div style={{ width: 8, height: 8, borderRadius: '50%', background: '#00ff00', boxShadow: '0 0 8px #00ff00' }}></div> Camera Active</div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}><div style={{ width: 8, height: 8, borderRadius: '50%', background: '#00ff00', boxShadow: '0 0 8px #00ff00' }}></div> Integrity Monitoring Active</div>
+                </div>
+            )}
+
+            {/* Warning Blocking Modal */}
+            {currentWarning && !isTerminated && (
+                <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(15px)', zIndex: 10000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <div style={{ background: '#ef4444', color: 'white', padding: '3rem', borderRadius: 24, maxWidth: 500, textAlign: 'center', boxShadow: '0 20px 50px rgba(239,68,68,0.4)', animation: 'fadeInUp 0.3s ease' }}>
+                        <div style={{ fontSize: '4rem', marginBottom: '1rem' }}>⚠️</div>
+                        <h2 style={{ fontSize: '1.8rem', fontWeight: 900, marginBottom: '1rem' }}>Warning</h2>
+                        <p style={{ fontSize: '1.2rem', fontWeight: 600, marginBottom: '2rem' }}>{currentWarning}</p>
+                        <p style={{ fontSize: '0.9rem', opacity: 0.8, marginBottom: '2rem' }}>Violations logged: {violationCount}/{maxViolations}</p>
+                        <button onClick={acknowledgeWarning} style={{ background: 'white', color: '#ef4444', border: 'none', padding: '1rem 2rem', borderRadius: 12, fontWeight: 900, fontSize: '1.1rem', cursor: 'pointer', width: '100%' }}>I Acknowledge</button>
+                    </div>
+                </div>
+            )}
+
             {/* Main Test Area */}
             <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
 
@@ -285,10 +338,17 @@ export const TestEngine = ({ config, onFinish }) => {
                                 <span style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>/{questions.filter(ques => ques.category === q.category).length}</span>
                             </div>
                         </div>
+                        {isProctoringActive && (
+                            <div style={{ textAlign: 'center' }}>
+                                <div style={{ fontSize: '0.7rem', fontWeight: 800, color: violationCount > 0 ? '#ef4444' : 'var(--text-muted)', textTransform: 'uppercase' }}>Violations</div>
+                                <div style={{ fontSize: '1.8rem', fontWeight: 900, color: violationCount > 0 ? '#ef4444' : '#059669' }}>{violationCount}<span style={{fontSize: '1rem', color: 'var(--text-muted)'}}>/{maxViolations}</span></div>
+                            </div>
+                        )}
                         <div style={{ textAlign: 'center' }}>
                             <div style={{ fontSize: '0.7rem', fontWeight: 800, color: urgent ? '#ef4444' : 'var(--text-muted)', textTransform: 'uppercase' }}>Time Left</div>
                             <div style={{ fontSize: '1.8rem', fontWeight: 900, color: urgent ? '#ef4444' : (config.color || '#6366f1'), fontFamily: 'monospace' }}>{mins}:{secs}</div>
                         </div>
+                        <button onClick={() => setModal(true)} style={{ padding: '0.8rem 2rem', borderRadius: 16, border: 'none', background: 'linear-gradient(135deg, #1A3263, #ef4444)', color: '#fff', fontWeight: 900, fontSize: '1rem', cursor: 'pointer', boxShadow: '0 10px 20px rgba(239, 68, 68, 0.3)', marginLeft: '1rem' }}>Finish Exam</button>
                     </div>
                 </div>
 
@@ -305,6 +365,17 @@ export const TestEngine = ({ config, onFinish }) => {
                     <p style={{ fontSize: '1.4rem', fontWeight: 600, color: 'var(--text-main)', lineHeight: 1.6, margin: 0 }}>{q.question}</p>
                 </div>
 
+
+                {/* Warning Banner */}
+                {isProctoringActive && violations.length > 0 && (
+                    <div style={{ background: '#ef444415', border: '1px solid #ef444450', borderRadius: 16, padding: '1rem 1.5rem', display: 'flex', alignItems: 'center', gap: 15, animation: 'fadeInUp 0.3s ease' }}>
+                        <div style={{ fontSize: '1.5rem' }}>⚠️</div>
+                        <div>
+                            <div style={{ color: '#ef4444', fontWeight: 800, fontSize: '0.9rem' }}>Proctoring Violation Logged ({violations.length}/{maxViolations})</div>
+                            <div style={{ color: 'var(--text-main)', fontSize: '0.85rem' }}>{violations[0].message}</div>
+                        </div>
+                    </div>
+                )}
 
                 {/* Options */}
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1.25rem' }}>
@@ -326,16 +397,12 @@ export const TestEngine = ({ config, onFinish }) => {
                         <button onClick={() => setCur(c => Math.max(0, c - 1))} disabled={cur === 0}
                             style={{ padding: '0.9rem 2rem', borderRadius: 16, border: '1px solid var(--border)', background: 'var(--bg-secondary)', color: 'var(--text-main)', fontWeight: 800, cursor: cur === 0 ? 'not-allowed' : 'pointer', opacity: cur === 0 ? 0.5 : 1 }}>← Previous</button>
                         <button onClick={() => setMarked(p => { const n = new Set(p); n.has(cur) ? n.delete(cur) : n.add(cur); return n; })}
-                            style={{ padding: '0.9rem 2rem', borderRadius: 16, border: '1px solid #f59e0b', background: marked.has(cur) ? '#f59e0b10' : 'transparent', color: '#f59e0b', fontWeight: 800, cursor: 'pointer' }}>
+                            style={{ padding: '0.9rem 2rem', borderRadius: 16, border: '1px solid #1A3263', background: marked.has(cur) ? '#1A326310' : 'transparent', color: '#1A3263', fontWeight: 800, cursor: 'pointer' }}>
                             {marked.has(cur) ? '★ Unmark' : '☆ Mark for Review'}
                         </button>
                     </div>
 
-                    {cur === questions.length - 1 ? (
-                        <button onClick={() => setModal(true)} style={{ padding: '1rem 3.5rem', borderRadius: 18, border: 'none', background: 'linear-gradient(135deg, #1A3263, #059669)', color: '#fff', fontWeight: 900, fontSize: '1rem', cursor: 'pointer', boxShadow: '0 10px 25px rgba(26, 50, 99, 0.3)' }}>Finish Session</button>
-                    ) : (
-                        <button onClick={() => setCur(c => c + 1)} style={{ padding: '1rem 3.5rem', borderRadius: 18, border: 'none', background: config.color || '#6366f1', color: '#fff', fontWeight: 900, fontSize: '1rem', cursor: 'pointer', boxShadow: `0 10px 25px ${(config.color || '#6366f1')}30` }}>Next Question →</button>
-                    )}
+                    <button onClick={() => setCur(c => Math.min(questions.length - 1, c + 1))} disabled={cur === questions.length - 1} style={{ padding: '1rem 3.5rem', borderRadius: 18, border: 'none', background: config.color || '#6366f1', color: '#fff', fontWeight: 900, fontSize: '1rem', cursor: cur === questions.length - 1 ? 'not-allowed' : 'pointer', opacity: cur === questions.length - 1 ? 0.5 : 1, boxShadow: `0 10px 25px ${(config.color || '#6366f1')}30` }}>Next Question →</button>
                 </div>
             </div>
 
@@ -354,7 +421,7 @@ export const TestEngine = ({ config, onFinish }) => {
                                 <button key={i} onClick={() => setCur(i)} className="q-btn"
                                     style={{
                                         aspectRatio: 1, borderRadius: 12, border: 'none', fontWeight: 900, fontSize: '0.85rem', cursor: 'pointer', transition: 'all 0.2s',
-                                        background: status === 'active' ? (config.color || '#6366f1') : status === 'marked' ? '#f59e0b' : status === 'answered' ? '#1A3263' : 'var(--bg-primary)',
+                                        background: status === 'active' ? (config.color || '#6366f1') : status === 'marked' ? '#1A3263' : status === 'answered' ? '#1A3263' : 'var(--bg-primary)',
                                         color: status === 'none' ? 'var(--text-muted)' : '#fff',
                                         boxShadow: status === 'active' ? `0 0 15px ${(config.color || '#6366f1')}40` : 'none'
                                     }}>
@@ -367,7 +434,7 @@ export const TestEngine = ({ config, onFinish }) => {
 
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 12, fontSize: '0.75rem', color: 'var(--text-muted)', borderTop: '1px solid var(--border)', paddingTop: '1.5rem' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}><div style={{ width: 12, height: 12, borderRadius: 3, background: '#1A3263' }} /> Answered</div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}><div style={{ width: 12, height: 12, borderRadius: 3, background: '#f59e0b' }} /> Marked for Review</div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}><div style={{ width: 12, height: 12, borderRadius: 3, background: '#1A3263' }} /> Marked for Review</div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}><div style={{ width: 12, height: 12, borderRadius: 3, background: 'var(--bg-primary)' }} /> Not Attempted</div>
                     </div>
 

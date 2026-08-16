@@ -29,7 +29,7 @@ const Landing = () => {
     const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
     const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
     const [bgIndex, setBgIndex] = useState(0);
-    const { user, login, logout, loginWithToken } = useAuth();
+    const { user, login, logout, loginWithToken, loading } = useAuth();
     const navigate = useNavigate();
     const { t } = useLanguage();
 
@@ -40,6 +40,8 @@ const Landing = () => {
         window.addEventListener('mousemove', handleMouseMove);
         return () => window.removeEventListener('mousemove', handleMouseMove);
     }, []);
+
+    // No auto-redirect — landing page is always accessible at '/'
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -158,7 +160,7 @@ const Landing = () => {
                                         whileHover={{ scale: 1.05 }}
                                         onClick={() => document.getElementById('platform')?.scrollIntoView({ behavior: 'smooth' })}
                                         className="btn-saas-secondary"
-                                        style={{ color: 'white', borderColor: 'rgba(255,255,255,0.3)' }}
+                                        style={{ background: 'rgba(255,255,255,0.1)', color: 'white', borderColor: 'rgba(255,255,255,0.3)' }}
                                     >
                                         Explore Career Domains
                                     </Motion.button>

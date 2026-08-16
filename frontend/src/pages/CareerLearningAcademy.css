@@ -1,0 +1,247 @@
+.academy-master-container {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: var(--bg-main);
+    color: var(--text-main);
+    overflow: hidden;
+}
+
+.academy-navbar {
+    height: 70px;
+    background: var(--bg-surface);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 2rem;
+    flex-shrink: 0;
+}
+
+.back-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-main);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.back-btn:hover {
+    background: var(--bg-secondary);
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+.academy-logo-badge {
+    background: var(--primary);
+    color: black;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.academy-layout {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+}
+
+.academy-sidebar-left {
+    width: 300px;
+    background: var(--bg-surface);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+}
+
+.curriculum-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1rem;
+}
+
+.curriculum-module {
+    margin-bottom: 1rem;
+}
+
+.module-header {
+    width: 100%;
+    background: transparent;
+    border: none;
+    color: var(--text-main);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+    border-radius: 0.5rem;
+    transition: 0.2s;
+}
+
+.module-header:hover {
+    background: var(--bg-secondary);
+}
+
+.module-topics {
+    display: flex;
+    flex-direction: column;
+    padding-left: 0.5rem;
+    margin-top: 0.5rem;
+    border-left: 1px solid var(--border);
+    margin-left: 1rem;
+}
+
+.topic-btn {
+    width: 100%;
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+    border-radius: 0.5rem;
+    transition: 0.2s;
+    margin-bottom: 0.2rem;
+}
+
+.topic-btn:hover {
+    color: var(--text-main);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.topic-btn.active {
+    background: rgba(212, 175, 55, 0.1);
+    color: var(--primary);
+    font-weight: 600;
+}
+
+.academy-center-canvas {
+    flex: 1;
+    overflow-y: auto;
+    background: var(--bg-main);
+    padding: 3rem 4rem;
+}
+
+.lesson-container {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.markdown-content {
+    line-height: 1.8;
+    font-size: 1.1rem;
+    color: #e2e8f0;
+}
+
+.markdown-content h1, .markdown-content h2, .markdown-content h3 {
+    margin-top: 2.5rem;
+    margin-bottom: 1.25rem;
+    color: white;
+}
+
+.markdown-content code {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 0.2rem 0.4rem;
+    border-radius: 0.25rem;
+    font-family: monospace;
+    font-size: 0.9em;
+    color: #93c5fd;
+}
+
+.markdown-content pre {
+    background: #1e1e1e;
+    padding: 1.5rem;
+    border-radius: 0.75rem;
+    overflow-x: auto;
+    border: 1px solid #333;
+    margin: 1.5rem 0;
+}
+
+.markdown-content ul, .markdown-content ol {
+    margin-bottom: 1.5rem;
+    padding-left: 1.5rem;
+}
+
+.markdown-content li {
+    margin-bottom: 0.5rem;
+}
+
+.visual-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-top: 3rem;
+}
+
+.concept-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    padding: 1.5rem;
+    border-radius: 1rem;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.concept-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    border-color: var(--primary);
+}
+
+.assignment-box {
+    margin-top: 3rem;
+    background: rgba(16, 185, 129, 0.05);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+    border-left: 4px solid #10b981;
+    padding: 2rem;
+    border-radius: 1rem;
+}
+
+.assignment-box h3 {
+    color: #10b981;
+    margin-top: 0;
+}
+
+.academy-sidebar-right {
+    width: 350px;
+    background: var(--bg-surface);
+    border-left: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    padding: 1.5rem;
+    overflow-y: auto;
+    gap: 2rem;
+}
+
+/* Custom scrollbar for Academy */
+.academy-center-canvas::-webkit-scrollbar,
+.curriculum-list::-webkit-scrollbar,
+.academy-sidebar-right::-webkit-scrollbar {
+    width: 8px;
+}
+
+.academy-center-canvas::-webkit-scrollbar-track,
+.curriculum-list::-webkit-scrollbar-track,
+.academy-sidebar-right::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.academy-center-canvas::-webkit-scrollbar-thumb,
+.curriculum-list::-webkit-scrollbar-thumb,
+.academy-sidebar-right::-webkit-scrollbar-thumb {
+    background: #475569;
+    border-radius: 10px;
+}
+
+.academy-center-canvas::-webkit-scrollbar-thumb:hover {
+    background: #64748b;
+}

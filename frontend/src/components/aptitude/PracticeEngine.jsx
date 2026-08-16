@@ -47,13 +47,13 @@ const MasteryRing = ({ pct = 0, size = 50, color = '#6366f1', stroke = 5 }) => {
 
 // ─── Difficulty Button Config ──────────────────────────────────────────────────
 const DIFFICULTIES = [
-    { id: 'Easy', label: 'Easy', icon: '🟢', desc: '10 questions • Foundational', color: '#1A3263', count: 10 },
-    { id: 'Medium', label: 'Medium', icon: '🟡', desc: '15 questions • Core skills', color: '#f59e0b', count: 15 },
-    { id: 'Hard', label: 'Hard', icon: '🔴', desc: '15 questions • Expert level', color: '#ef4444', count: 15 },
-    { id: 'Company', label: 'Company Level', icon: '🏢', desc: '20 questions • Interview-style', color: '#6366f1', count: 20 },
-    { id: 'Govt', label: 'Govt PYQs', icon: '🏛️', desc: '20 questions • Exam pattern', color: '#8b5cf6', count: 20 },
-    { id: 'Mixed', label: 'Mixed Practice', icon: '🔀', desc: '20 questions • All levels', color: '#06b6d4', count: 20 },
-    { id: 'FullTopic', label: 'Full Topic Mock', icon: '🏁', desc: '30 questions • 30 mins timed', color: '#ec4899', count: 30, timed: true },
+    { id: 'Easy', label: 'Easy', icon: '🟢', desc: '15 questions • Foundational', color: '#1A3263', count: 15 },
+    { id: 'Medium', label: 'Medium', icon: '🟡', desc: '20 questions • Core skills', color: '#1A3263', count: 20 },
+    { id: 'Hard', label: 'Hard', icon: '🔴', desc: '25 questions • Expert level', color: '#ef4444', count: 25 },
+    { id: 'Company', label: 'Company Level', icon: '🏢', desc: '30 questions • Interview-style', color: '#6366f1', count: 30 },
+    { id: 'Govt', label: 'Govt PYQs', icon: '🏛️', desc: '30 questions • Exam pattern', color: '#8b5cf6', count: 30 },
+    { id: 'Mixed', label: 'Mixed Practice', icon: '🔀', desc: '30 questions • All levels', color: '#06b6d4', count: 30 },
+    { id: 'FullTopic', label: 'Full Topic Mock', icon: '🏁', desc: '50 questions • 45 mins timed', color: '#ec4899', count: 50, timed: true },
 ];
 
 // ─── PracticeEngine ─────────────────────────────────────────────────────────────
@@ -213,7 +213,7 @@ export const PracticeEngine = ({ onStartTest }) => {
                                             const tp = getTopicProgress(progress, cat.key, t);
                                             return li === 0 ? tp.easyCompleted : li === 1 ? tp.mediumCompleted : tp.hardCompleted;
                                         }).length;
-                                        const dotColor = li === 0 ? '#1A3263' : li === 1 ? '#f59e0b' : '#ef4444';
+                                        const dotColor = li === 0 ? '#1A3263' : li === 1 ? '#1A3263' : '#ef4444';
                                         return (
                                             <div key={level} style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
                                                 <div style={{ width: 8, height: 8, borderRadius: '50%', background: doneCount > 0 ? dotColor : 'var(--border)' }} />
@@ -279,7 +279,7 @@ export const PracticeEngine = ({ onStartTest }) => {
                             <div style={{ display: 'flex', gap: 6, marginBottom: '0.85rem' }}>
                                 {[
                                     { label: 'E', done: tp.easyCompleted, color: '#1A3263' },
-                                    { label: 'M', done: tp.mediumCompleted, color: '#f59e0b' },
+                                    { label: 'M', done: tp.mediumCompleted, color: '#1A3263' },
                                     { label: 'H', done: tp.hardCompleted, color: '#ef4444' },
                                 ].map(({ label, done, color }) => (
                                     <div key={label} style={{ width: 26, height: 26, borderRadius: 6, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.65rem', fontWeight: 900, background: done ? color : 'var(--bg-primary)', color: done ? '#fff' : 'var(--text-muted)', border: done ? 'none' : '1px solid var(--border)' }}>
@@ -338,7 +338,7 @@ export const PracticeEngine = ({ onStartTest }) => {
                         <div style={{ display: 'flex', gap: 8 }}>
                             {[
                                 { label: 'Easy', done: topicProg.easyCompleted, color: '#1A3263' },
-                                { label: 'Medium', done: topicProg.mediumCompleted, color: '#f59e0b', locked: !topicProg.easyCompleted },
+                                { label: 'Medium', done: topicProg.mediumCompleted, color: '#1A3263', locked: !topicProg.easyCompleted },
                                 { label: 'Hard', done: topicProg.hardCompleted, color: '#ef4444', locked: !topicProg.mediumCompleted },
                             ].map(({ label, done, color, locked }) => (
                                 <div key={label} style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '4px 10px', borderRadius: 8, background: done ? `${color}20` : locked ? 'var(--bg-primary)' : `${color}10`, border: `1px solid ${done ? color : locked ? 'var(--border)' : color + '40'}` }}>

@@ -4,7 +4,7 @@ export const RESUME_SECTORS = [
     { id: 'it', label: 'IT / Software', icon: '💻', color: '#6366f1', description: 'Amazon, Google, TCS, Startups, and FAANG formats' },
     { id: 'core', label: 'Core Engineering', icon: '⚙️', color: '#06b6d4', description: 'Mechanical, Civil, EEE, ECE, and Manufacturing' },
     { id: 'govt', label: 'Government', icon: '🏛️', color: '#ef4444', description: 'UPSC, SSC, Banking PO, and State Govt formats' },
-    { id: 'banking', label: 'Banking & Finance', icon: '🏦', color: '#f59e0b', description: 'IB, Risk, FinTech, and CA specialized formats' },
+    { id: 'banking', label: 'Banking & Finance', icon: '🏦', color: '#1A3263', description: 'IB, Risk, FinTech, and CA specialized formats' },
     { id: 'mgmt', label: 'MBA / Management', icon: '👔', color: '#a855f7', description: 'Product Mgmt, Consulting, and Strategy formats' }
 ];
 

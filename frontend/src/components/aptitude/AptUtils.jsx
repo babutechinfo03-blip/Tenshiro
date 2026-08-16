@@ -5,7 +5,7 @@ import { CATEGORIES, TRACKS, COMPANY_DETAILS, BADGES, RESOURCES, PIPELINE_STEPS,
 // ─── Utils ─────────────────────────────────────────────────────────────────────
 export const avg = arr => arr.length ? Math.round(arr.reduce((s, x) => s + x, 0) / arr.length) : 0;
 export const pctile = p => p >= 95 ? '99th' : p >= 85 ? '95th' : p >= 75 ? '85th' : p >= 65 ? '75th' : p >= 50 ? '60th' : '20th';
-export const grade = p => p >= 80 ? { l: 'Excellent 🏆', c: '#1A3263' } : p >= 65 ? { l: 'Good 👍', c: '#6366f1' } : p >= 50 ? { l: 'Average 📚', c: '#f59e0b' } : { l: 'Needs Work 💪', c: '#ef4444' };
+export const grade = p => p >= 80 ? { l: 'Excellent 🏆', c: '#1A3263' } : p >= 65 ? { l: 'Good 👍', c: '#6366f1' } : p >= 50 ? { l: 'Average 📚', c: '#1A3263' } : { l: 'Needs Work 💪', c: '#ef4444' };
 
 // loadP — load aptitude performance data from localStorage (used by Chatbot for context)
 export const loadP = () => {
@@ -80,8 +80,8 @@ export const Radar = ({ data, size = 250 }) => {
         <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
             {[.25, .5, .75, 1].map((r, i) => <polygon key={i} points={poly(r)} fill="none" stroke="var(--border)" strokeWidth="1" />)}
             {ks.map((_, i) => { const p = pt(i, 1); return <line key={i} x1={cx} y1={cy} x2={p.x} y2={p.y} stroke="var(--border)" strokeWidth="1" />; })}
-            <polygon points={ks.map((k, i) => { const p = pt(i, (data[k] || 0) / 100); return `${p.x},${p.y}`; }).join(' ')} fill="rgba(99,102,241,0.2)" stroke="#6366f1" strokeWidth="2.5" />
-            {ks.map((k, i) => { const p = pt(i, (data[k] || 0) / 100); return <circle key={i} cx={p.x} cy={p.y} r={3.5} fill="#6366f1" />; })}
+            <polygon points={ks.map((k, i) => { const p = pt(i, (data[k] || 0) / 100); return `${p.x},${p.y}`; }).join(' ')} fill="rgba(59,130,246,0.2)" stroke="#3b82f6" strokeWidth="2.5" />
+            {ks.map((k, i) => { const p = pt(i, (data[k] || 0) / 100); return <circle key={i} cx={p.x} cy={p.y} r={3.5} fill="#3b82f6" />; })}
             {ks.map((k, i) => { const p = pt(i, 1.28); return <text key={i} x={p.x} y={p.y} textAnchor="middle" dominantBaseline="middle" fill="var(--text-muted)" fontSize="9" fontWeight="700">{k}</text>; })}
         </svg>
     );
@@ -101,7 +101,7 @@ export const HeroSection = ({ kpis, perf }) => {
     const cards = [
         { l: 'Aptitude Index', v: `${kpis.overall}%`, c: '#6366f1', i: '🧠', s: `${kpis.total} tests taken` },
         { l: 'Placement Ready', v: `${kpis.placement}%`, c: '#8b5cf6', i: '💻', s: 'IT companies' },
-        { l: 'Govt Readiness', v: `${kpis.govt}%`, c: '#f59e0b', i: '🏛️', s: 'SSC/IBPS/UPSC' },
+        { l: 'Govt Readiness', v: `${kpis.govt}%`, c: '#1A3263', i: '🏛️', s: 'SSC/IBPS/UPSC' },
         { l: 'Company Conf.', v: `${kpis.company}%`, c: '#1A3263', i: '🏢', s: 'Mock avg' },
         { l: 'Speed Index', v: `${kpis.speed}pts`, c: '#06b6d4', i: '⚡', s: 'Time efficiency' },
         { l: 'Score Trend', v: trend.length > 1 ? (trend[trend.length - 1] >= trend[0] ? '📈 Up' : '📉 Dip') : '⚡ Start', c: '#ec4899', i: '📊', s: trend.length > 1 ? `${trend[0]}% → ${trend[trend.length - 1]}%` : 'Take tests to see' },
@@ -110,9 +110,9 @@ export const HeroSection = ({ kpis, perf }) => {
         <div style={{ marginBottom: '2.5rem' }}>
             <div style={{ textAlign: 'center', marginBottom: '1.75rem' }}>
                 <div style={{ display: 'inline-flex', alignItems: 'center', gap: 14 }}>
-                    <div style={{ width: 52, height: 52, background: 'linear-gradient(135deg,#6366f1,#a855f7)', borderRadius: 16, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.6rem', boxShadow: '0 8px 24px rgba(99,102,241,.35)' }}>🧠</div>
+                    <div style={{ width: 52, height: 52, background: '#1e293b', borderRadius: 16, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.6rem', boxShadow: '0 8px 24px rgba(30,41,59,.25)' }}>🧠</div>
                     <div style={{ textAlign: 'left' }}>
-                        <h1 style={{ margin: 0, fontSize: '1.8rem', fontWeight: 900, background: 'linear-gradient(135deg,#6366f1,#a855f7,#ec4899)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>AI Aptitude Intelligence Engine</h1>
+                        <h1 style={{ margin: 0, fontSize: '1.8rem', fontWeight: 900, color: '#1e293b' }}>Aptitude Intelligence Engine</h1>
                         <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '0.82rem', fontWeight: 600, letterSpacing: 2, textTransform: 'uppercase' }}>Structured · Adaptive · Market-Aligned</p>
                     </div>
                 </div>
@@ -142,7 +142,7 @@ export const Pipeline = ({ onStep, activeTab }) => (
                 const active = step.tab === activeTab;
                 return (
                     <div key={step.id} style={{ flex: 1, display: 'flex', alignItems: 'center' }}>
-                        <div onClick={() => onStep(step.tab)} style={{ flex: 1, padding: '0.85rem 0.5rem', borderRadius: 12, background: active ? 'linear-gradient(135deg,#6366f1,#a855f7)' : 'var(--bg-primary)', border: `1px solid ${active ? 'transparent' : 'var(--border)'}`, cursor: 'pointer', textAlign: 'center', transition: 'all .2s' }}>
+                        <div onClick={() => onStep(step.tab)} style={{ flex: 1, padding: '0.85rem 0.5rem', borderRadius: 12, background: active ? '#1e293b' : 'var(--bg-primary)', border: `1px solid ${active ? '#1e293b' : 'var(--border)'}`, cursor: 'pointer', textAlign: 'center', transition: 'all .2s' }}>
                             <div style={{ fontSize: '1.2rem', marginBottom: 3 }}>{step.icon}</div>
                             <div style={{ fontSize: '0.72rem', fontWeight: 800, color: active ? '#fff' : 'var(--text-main)' }}>{step.label}</div>
                             <div style={{ fontSize: '0.6rem', color: active ? 'rgba(255,255,255,.7)' : 'var(--text-muted)', marginTop: 2 }}>{step.desc}</div>
@@ -457,7 +457,7 @@ export const ResourceEngine = ({ perf, onBookmark, onStatusUpdate }) => {
     const statusMap = perf.resourceStatus || {}; // { title: 'Completed' }
 
     const icons = { video: '▶️', pdf: '📄', download: '💾', book: '📚', shortcut: '⚡', formula: '🧬', mock: '🎯', pyq: '⌛' };
-    const colors = { video: '#6366f1', pdf: '#ef4444', shortcut: '#f59e0b', formula: '#1A3263', mock: '#ec4899', pyq: '#06b6d4' };
+    const colors = { video: '#6366f1', pdf: '#ef4444', shortcut: '#1A3263', formula: '#1A3263', mock: '#ec4899', pyq: '#06b6d4' };
 
     return (
         <div style={{ marginBottom: '2.5rem' }}>
@@ -495,7 +495,7 @@ export const ResourceEngine = ({ perf, onBookmark, onStatusUpdate }) => {
                             }).map((res, i) => {
                                 const bookmarked = bm.includes(res.title);
                                 const status = statusMap[res.title] || 'Not Started';
-                                const statusColor = status === 'Completed' ? '#1A3263' : status === 'In Progress' ? '#f59e0b' : 'var(--text-muted)';
+                                const statusColor = status === 'Completed' ? '#1A3263' : status === 'In Progress' ? '#1A3263' : 'var(--text-muted)';
 
                                 return (
                                     <div key={i} style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)', borderRadius: 14, padding: '1rem', display: 'flex', alignItems: 'center', gap: 12, transition: 'all .2s' }}>
@@ -518,7 +518,7 @@ export const ResourceEngine = ({ perf, onBookmark, onStatusUpdate }) => {
                                         </div>
                                         <div style={{ display: 'flex', gap: 6 }}>
                                             <a href={res.link} target="_blank" rel="noopener noreferrer" style={{ padding: '6px 12px', borderRadius: 8, background: `${cat.color}20`, color: cat.color, fontWeight: 800, fontSize: '0.7rem', textDecoration: 'none', border: `1px solid ${cat.color}35` }}>Open</a>
-                                            <button onClick={() => onBookmark(res.title)} style={{ padding: '6px', borderRadius: 8, border: '1px solid var(--border)', background: bookmarked ? '#f59e0b22' : 'transparent', color: bookmarked ? '#f59e0b' : 'var(--text-muted)', cursor: 'pointer', fontSize: '1rem' }}>{bookmarked ? '★' : '☆'}</button>
+                                            <button onClick={() => onBookmark(res.title)} style={{ padding: '6px', borderRadius: 8, border: '1px solid var(--border)', background: bookmarked ? '#1A326322' : 'transparent', color: bookmarked ? '#1A3263' : 'var(--text-muted)', cursor: 'pointer', fontSize: '1rem' }}>{bookmarked ? '★' : '☆'}</button>
                                         </div>
                                     </div>
                                 );
@@ -551,16 +551,16 @@ export const GamificationPanel = ({ perf, radar }) => {
                 {/* Streak + History */}
                 <div style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)', borderRadius: 16, padding: '1.5rem' }}>
                     <div style={{ fontWeight: 800, color: 'var(--text-main)', marginBottom: '1rem', fontSize: '0.85rem' }}>📈 Score History</div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: '1rem', background: streak > 0 ? '#f59e0b15' : 'var(--bg-primary)', padding: '0.7rem', borderRadius: 10, border: `1px solid ${streak > 0 ? '#f59e0b40' : 'var(--border)'}` }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: '1rem', background: streak > 0 ? '#1A326315' : 'var(--bg-primary)', padding: '0.7rem', borderRadius: 10, border: `1px solid ${streak > 0 ? '#1A326340' : 'var(--border)'}` }}>
                         <div style={{ fontSize: '2rem' }}>🔥</div>
-                        <div><div style={{ fontSize: '1.2rem', fontWeight: 900, color: '#f59e0b' }}>{streak} Day</div><div style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>Practice Streak</div></div>
+                        <div><div style={{ fontSize: '1.2rem', fontWeight: 900, color: '#1A3263' }}>{streak} Day</div><div style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>Practice Streak</div></div>
                     </div>
                     {(perf.attempts || []).length === 0 ? (
                         <div style={{ textAlign: 'center', padding: '1.5rem', color: 'var(--text-muted)', fontSize: '0.82rem' }}>No history yet. Start a test!</div>
                     ) : (
                         <div style={{ display: 'flex', alignItems: 'flex-end', gap: 6, height: 80 }}>
                             {(perf.attempts || []).slice(-10).map((a, i) => {
-                                const tc = a.pct >= 70 ? '#1A3263' : a.pct >= 40 ? '#f59e0b' : '#ef4444';
+                                const tc = a.pct >= 70 ? '#1A3263' : a.pct >= 40 ? '#1A3263' : '#ef4444';
                                 const lbl = { quantitative: 'Q', logical: 'L', verbal: 'V', dataInterpretation: 'DI' };
                                 return (
                                     <div key={i} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3 }} title={`${a.pct}%`}>

@@ -5,6 +5,44 @@ const passport = require('passport');
 require('dotenv').config();
 const db = require('./config/db');
 
+// Initialize database tables
+const initDb = async () => {
+    try {
+        await db.query(`
+            CREATE TABLE IF NOT EXISTS resume_analyses (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                user_id INT NOT NULL,
+                target_role VARCHAR(255) NOT NULL,
+                job_description TEXT NULL,
+                ats_score INT NOT NULL,
+                job_match_score INT NOT NULL,
+                skill_match_score INT NOT NULL,
+                resume_quality_score INT NOT NULL,
+                placement_readiness_score INT NOT NULL,
+                missing_skills TEXT NULL,
+                missing_keywords TEXT NULL,
+                missing_technologies TEXT NULL,
+                resume_weaknesses TEXT NULL,
+                ats_formatting_issues TEXT NULL,
+                recruiter_review TEXT NULL,
+                suggestions TEXT NULL,
+                rewrites TEXT NULL,
+                roadmap TEXT NULL,
+                placement_probability INT NOT NULL,
+                interview_probability INT NOT NULL,
+                shortlisting_probability INT NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+            )
+        `);
+        console.log('Database tables verified/created successfully.');
+    } catch (err) {
+        console.error('Error initializing database tables:', err);
+    }
+};
+initDb();
+
+
 const app = express();
 
 // Initialize Passport

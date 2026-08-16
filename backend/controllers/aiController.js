@@ -864,3 +864,55 @@ exports.getUserRoadmaps = async (req, res) => {
         res.status(500).json({ message: 'Failed to fetch roadmaps' });
     }
 };
+
+// Generate Skill Tutorial Content (W3Schools style)
+exports.getSkillTutorial = async (req, res) => {
+    const { skill, role, language = 'en' } = req.body;
+    if (!skill) return res.status(400).json({ message: 'Skill is required' });
+
+    try {
+        if (!groq) throw new Error("No API Key");
+        
+        const langName = { en: 'English', ta: 'Tamil', hi: 'Hindi' }[language] || 'English';
+
+        const completion = await groq.chat.completions.create({
+            model: "llama-3.3-70b-versatile",
+            messages: [
+                {
+                    role: "system",
+                    content: `You are an expert technical instructor creating a W3Schools-style interactive tutorial.
+                    Output strictly in ${langName}.`
+                },
+                {
+                    role: "user",
+                    content: `Create a brief, highly practical interactive tutorial for the skill: "${skill}" in the context of the role: "${role || 'Developer'}".
+                    
+                    Return STRICTLY a JSON object with:
+                    {
+                        "title": "Tutorial Title",
+                        "theory": "Markdown formatted explanation with headings, bullet points, and brief theory. Do not use code blocks here.",
+                        "example_title": "Example Name",
+                        "example_code": "The exact code snippet to demonstrate the concept.",
+                        "practice_prompt": "A quick challenge for them to modify the code.",
+                        "language_mode": "javascript" or "html" or "python" or "sql" etc.
+                    }`
+                }
+            ],
+            response_format: { type: "json_object" }
+        });
+
+        res.json(JSON.parse(completion.choices[0].message.content));
+
+    } catch (err) {
+        console.warn(`Skill Tutorial Error: ${err.message}`);
+        // Mock fallback
+        res.json({
+            title: `${skill} Fundamentals`,
+            theory: `### What is ${skill}?\nIt is a core competency required for modern development.\n\n- Essential for building scalable apps.\n- Highly requested by employers.\n\nMastering this will significantly boost your profile.`,
+            example_title: `Basic ${skill} Implementation`,
+            example_code: `// Example code for ${skill}\nconsole.log("Hello, ${skill}!");\n\nfunction practice() {\n  return true;\n}`,
+            practice_prompt: `Try modifying the console.log statement to output your name instead of 'Hello, ${skill}!'.`,
+            language_mode: "javascript"
+        });
+    }
+};

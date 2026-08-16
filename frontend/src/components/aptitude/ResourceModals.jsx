@@ -170,7 +170,7 @@ export const PdfModal = ({ topic, mode, formulaContent, onClose }) => {
         <div style="background:#f0f4ff;border:1px solid #c7d2fe;border-radius:10px;padding:1rem;margin-bottom:.75rem;font-family:monospace;font-size:.92rem;color:#4338ca">
             Formula 2: Derived rule for special cases in ${topic} problems.
         </div>
-        <div style="background:#fef9ee;border:1px solid #fde68a;border-radius:10px;padding:1rem;margin-bottom:.75rem;font-size:.88rem;color:#92400e">
+        <div style="background:#eff6ff;border:1px solid #93c5fd;border-radius:10px;padding:1rem;margin-bottom:.75rem;font-size:.88rem;color:#92400e">
             ⚡ Shortcut: Identify the question type first, then select the right formula variant.
         </div>
         <p style="font-size:.82rem;color:#94a3b8;margin-top:1.5rem">
@@ -200,7 +200,7 @@ export const PdfModal = ({ topic, mode, formulaContent, onClose }) => {
                     <button onClick={() => setDark(d => !d)} className="rm-btn secondary" style={{ padding: '.35rem .75rem', fontSize: '.8rem' }}>
                         {dark ? '☀️ Light' : '🌙 Dark'}
                     </button>
-                    <button onClick={toggleBookmark} style={{ marginLeft: 'auto', padding: '.35rem .75rem', borderRadius: 8, border: `1px solid ${bookmarked ? '#fde68a' : '#e2e8f0'}`, background: bookmarked ? '#fef9ee' : '#f8fafc', color: bookmarked ? '#d97706' : '#64748b', fontWeight: 800, fontSize: '.8rem', cursor: 'pointer', fontFamily: 'Inter,sans-serif', transition: 'all .15s' }}>
+                    <button onClick={toggleBookmark} style={{ marginLeft: 'auto', padding: '.35rem .75rem', borderRadius: 8, border: `1px solid ${bookmarked ? '#93c5fd' : '#e2e8f0'}`, background: bookmarked ? '#eff6ff' : '#f8fafc', color: bookmarked ? '#1A3263' : '#64748b', fontWeight: 800, fontSize: '.8rem', cursor: 'pointer', fontFamily: 'Inter,sans-serif', transition: 'all .15s' }}>
                         {bookmarked ? '★ Bookmarked' : '☆ Bookmark'}
                     </button>
                 </div>
@@ -273,7 +273,7 @@ export const PYQModal = ({ topic, mode, questions, sets, onClose }) => {
     const modeConfig = {
         pyq: { icon: '📑', title: 'Previous Year Questions', color: '#6366f1' },
         companySet: { icon: '🏢', title: 'Company Pattern Questions', color: '#7e22ce' },
-        govtSet: { icon: '🏛️', title: 'Govt Exam PYQs', color: '#c2410c' },
+        govtSet: { icon: '🏛️', title: 'Govt Exam PYQs', color: '#1A3263' },
     };
     const mc = modeConfig[mode] || modeConfig.pyq;
 
@@ -330,7 +330,7 @@ export const PYQModal = ({ topic, mode, questions, sets, onClose }) => {
                             <div style={{ background: '#f8fafc', border: '1px solid #e8eaf0', borderRadius: 14, padding: '1.25rem 1.5rem', marginBottom: '1.25rem' }}>
                                 <p style={{ margin: 0, fontWeight: 700, color: '#0f172a', fontSize: '.95rem', lineHeight: 1.65 }}>{q.q}</p>
                                 {q.difficulty && (
-                                    <span className="rm-badge" style={{ marginTop: '.6rem', background: q.difficulty === 'Easy' ? '#ecfdf5' : q.difficulty === 'Hard' ? '#fff1f2' : '#fffbeb', color: q.difficulty === 'Easy' ? '#059669' : q.difficulty === 'Hard' ? '#e11d48' : '#d97706' }}>
+                                    <span className="rm-badge" style={{ marginTop: '.6rem', background: q.difficulty === 'Easy' ? '#ecfdf5' : q.difficulty === 'Hard' ? '#fff1f2' : '#eff6ff', color: q.difficulty === 'Easy' ? '#059669' : q.difficulty === 'Hard' ? '#e11d48' : '#1A3263' }}>
                                         {q.difficulty}
                                     </span>
                                 )}

@@ -1,0 +1,208 @@
+.learning-hub-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(5px);
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+}
+
+.learning-hub-container {
+    width: 100%;
+    max-width: 1400px;
+    height: 90vh;
+    background: var(--bg-primary);
+    border-radius: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    border: 1px solid var(--border);
+    animation: modalPopIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes modalPopIn {
+    0% { opacity: 0; transform: scale(0.95); }
+    100% { opacity: 1; transform: scale(1); }
+}
+
+.learning-hub-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.25rem 2rem;
+    background: var(--bg-surface);
+    border-bottom: 1px solid var(--border);
+}
+
+.hub-logo {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    background: rgba(212, 175, 55, 0.1); /* Assuming primary is a gold-ish color based on previous CSS */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.hub-close-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: color 0.2s;
+    padding: 0.5rem;
+}
+
+.hub-close-btn:hover {
+    color: #ef4444; /* red */
+}
+
+.learning-hub-body {
+    flex: 1;
+    display: flex;
+    overflow: hidden;
+}
+
+.hub-loading-state, .hub-error-state {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--text-muted);
+    font-size: 1.2rem;
+}
+
+.hub-theory-pane {
+    flex: 1;
+    padding: 2.5rem;
+    overflow-y: auto;
+    border-right: 1px solid var(--border);
+    background: var(--bg-main);
+}
+
+.markdown-content {
+    line-height: 1.7;
+    font-size: 1.05rem;
+    color: var(--text-main);
+}
+
+.markdown-content h1, .markdown-content h2, .markdown-content h3 {
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    font-weight: 700;
+}
+
+.markdown-content ul, .markdown-content ol {
+    margin-bottom: 1.5rem;
+    padding-left: 1.5rem;
+}
+
+.markdown-content p {
+    margin-bottom: 1.25rem;
+}
+
+.practice-prompt-box {
+    margin-top: 3rem;
+    padding: 1.5rem;
+    background: rgba(212, 175, 55, 0.05);
+    border: 1px solid rgba(212, 175, 55, 0.2);
+    border-radius: 1rem;
+    border-left: 4px solid var(--primary);
+}
+
+.hub-editor-pane {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: #1e1e1e; /* VS Code dark theme look */
+    color: #d4d4d4;
+}
+
+.editor-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1.5rem;
+    background: #252526;
+    border-bottom: 1px solid #333;
+}
+
+.run-btn {
+    background: #10b981; /* Emerald green */
+    color: white;
+    border: none;
+    padding: 0.5rem 1.25rem;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: background 0.2s;
+}
+
+.run-btn:hover {
+    background: #059669;
+}
+
+.editor-container {
+    flex: 1;
+    display: flex;
+}
+
+.code-editor {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: #9cdcfe; /* light blue for code */
+    font-family: 'Fira Code', 'Courier New', Courier, monospace;
+    font-size: 1rem;
+    padding: 1.5rem;
+    resize: none;
+    outline: none;
+    line-height: 1.6;
+}
+
+.output-container {
+    height: 35%;
+    border-top: 1px solid #333;
+    background: #1e1e1e;
+    display: flex;
+    flex-direction: column;
+}
+
+.output-header {
+    background: #252526;
+    padding: 0.5rem 1.5rem;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #858585;
+    border-bottom: 1px solid #333;
+}
+
+.console-output {
+    flex: 1;
+    padding: 1.5rem;
+    margin: 0;
+    font-family: 'Fira Code', 'Courier New', Courier, monospace;
+    font-size: 0.95rem;
+    color: #ce9178; /* string color */
+    overflow-y: auto;
+    white-space: pre-wrap;
+}
+
+.html-preview-box {
+    flex: 1;
+    background: white;
+    padding: 1.5rem;
+    color: black;
+    overflow-y: auto;
+}

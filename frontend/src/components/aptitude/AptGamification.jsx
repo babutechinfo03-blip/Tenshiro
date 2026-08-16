@@ -17,10 +17,10 @@ const AptGamification = ({ perf }) => {
             {/* Streaks and Levels */}
             <div style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)', borderRadius: 24, padding: '2rem' }}>
                 <h3 style={{ fontSize: '1.2rem', fontWeight: 900, color: 'var(--text-main)', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: 10 }}>🔥 Mastery Streak</h3>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 20, background: 'linear-gradient(135deg, #f59e0b20, #ef444420)', padding: '2rem', borderRadius: 20, border: '1px solid #f59e0b30', marginBottom: '2rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 20, background: 'linear-gradient(135deg, #1A326320, #ef444420)', padding: '2rem', borderRadius: 20, border: '1px solid #1A326330', marginBottom: '2rem' }}>
                     <div style={{ fontSize: '4rem' }}>🔥</div>
                     <div>
-                        <div style={{ fontSize: '3rem', fontWeight: 900, color: '#f59e0b', lineHeight: 1 }}>{streak}</div>
+                        <div style={{ fontSize: '3rem', fontWeight: 900, color: '#1A3263', lineHeight: 1 }}>{streak}</div>
                         <div style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-muted)' }}>Day Practice Streak</div>
                     </div>
                 </div>

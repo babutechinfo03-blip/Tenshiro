@@ -15,7 +15,7 @@ import '@fontsource/plus-jakarta-sans/700.css';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <Suspense fallback={<div className="loading-screen">Loading...</div>}>
+    <Suspense fallback={<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', color: 'var(--text-main, #fff)', background: 'var(--bg-primary, #000)' }}>Loading...</div>}>
       <App />
     </Suspense>
   </React.StrictMode>,

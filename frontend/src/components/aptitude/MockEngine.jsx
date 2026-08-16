@@ -50,11 +50,11 @@ const MockEngine = ({ onStartTest }) => {
     const mockTypes = [
         { id: 'beginner', label: 'Beginner Level', icon: '🐣', desc: '40 Questions • 40 Mins', color: '#1A3263', pattern: MOCK_PATTERNS.beginner },
         { id: 'intermediate', label: 'Intermediate Level', icon: '🚀', desc: '60 Questions • 60 Mins', color: '#6366f1', pattern: MOCK_PATTERNS.intermediate },
-        { id: 'advanced', label: 'Advanced Level', icon: '🔥', desc: '75 Questions • 75 Mins', color: '#f59e0b', pattern: MOCK_PATTERNS.advanced },
+        { id: 'advanced', label: 'Advanced Level', icon: '🔥', desc: '75 Questions • 75 Mins', color: '#1A3263', pattern: MOCK_PATTERNS.advanced },
         { id: 'company', label: 'Company Placement', icon: '🏢', desc: 'TCS, Amazon, Microsoft Patterns', color: '#ec4899' },
         { id: 'govt', label: 'Government Exam', icon: '🏛️', desc: 'SSC CGL, Bank PO, TNPSC', color: '#ef4444' },
         { id: 'adaptive', label: 'Adaptive AI Mock', icon: '🧠', desc: 'Dynamic level based on you', color: '#a855f7', pattern: MOCK_PATTERNS.adaptive },
-        { id: 'mega', label: 'Mega 100 Grand Test', icon: '🏆', desc: '100 Questions • 120 Mins', color: '#06b6d4', pattern: MOCK_PATTERNS.mega }
+        { id: 'mega', label: 'Mega 100 Grand Test', icon: '🏆', desc: '100 Questions • 60 Mins', color: '#06b6d4', pattern: MOCK_PATTERNS.mega }
     ];
 
     const handleSelectType = (type) => {
@@ -95,7 +95,9 @@ const MockEngine = ({ onStartTest }) => {
                 questions: p.questions,
                 duration: p.duration,
                 difficulty: p.difficulty,
-                isAdaptive: p.isAdaptive
+                isAdaptive: p.isAdaptive,
+                dist: p.dist,
+                marking: p.marking
             };
         }
         onStartTest(config);
@@ -112,7 +114,7 @@ const MockEngine = ({ onStartTest }) => {
                         {[
                             { l: 'Mocks Taken', v: stats.history.length, c: '#6366f1' },
                             { l: 'Avg Accuracy', v: `${Math.round(stats.history.reduce((a, b) => a + b.accuracy, 0) / stats.history.length || 0)}%`, c: '#1A3263' },
-                            { l: 'Total XP', v: stats.xp.toLocaleString(), c: '#f59e0b' },
+                            { l: 'Total XP', v: stats.xp.toLocaleString(), c: '#1A3263' },
                             { l: 'Global Rank', v: stats.xp > 1000 ? '#452' : 'Unranked', c: '#ec4899' }
                         ].map((s, i) => (
                             <div key={i} style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)', padding: '1.2rem', borderRadius: 20, textAlign: 'center' }}>
@@ -138,7 +140,7 @@ const MockEngine = ({ onStartTest }) => {
                                 }}
                             >
                                 <div style={{ fontSize: '2.5rem', marginBottom: '1.2rem' }}>{type.icon}</div>
-                                <h3 style={{ fontWeight: 800, fontSize: '1.2rem', marginBottom: '0.5rem', color: '#fff' }}>{type.label}</h3>
+                                <h3 style={{ fontWeight: 800, fontSize: '1.2rem', marginBottom: '0.5rem', color: 'var(--text-main)' }}>{type.label}</h3>
                                 <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', lineHeight: 1.5 }}>{type.desc}</p>
                                 <div style={{ position: 'absolute', bottom: -10, right: -10, fontSize: '5rem', opacity: 0.05, filter: 'grayscale(1)' }}>{type.icon}</div>
                             </button>
@@ -160,7 +162,7 @@ const MockEngine = ({ onStartTest }) => {
                                     {section.companies.map(c => (
                                         <button key={c} onClick={() => handleSelectSub(c)}
                                             style={{
-                                                background: 'var(--bg-secondary)', border: '1px solid var(--border)', borderRadius: 16, padding: '1.2rem', textAlign: 'center', cursor: 'pointer', transition: 'all 0.2s', fontWeight: 700, color: '#fff'
+                                                background: 'var(--bg-secondary)', border: '1px solid var(--border)', borderRadius: 16, padding: '1.2rem', textAlign: 'center', cursor: 'pointer', transition: 'all 0.2s', fontWeight: 700, color: 'var(--text-main)'
                                             }}
                                             onMouseEnter={e => e.currentTarget.style.borderColor = '#6366f1'}
                                             onMouseLeave={e => e.currentTarget.style.borderColor = 'var(--border)'}

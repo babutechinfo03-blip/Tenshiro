@@ -68,14 +68,14 @@ const AptResourceHub = ({ bookmarks, onBookmark }) => {
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
                                     <div style={{ width: 50, height: 50, background: rCat.accent, borderRadius: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.8rem' }}>{icons[res.type] || '📌'}</div>
                                     <button onClick={() => onBookmark(res.title)}
-                                        style={{ border: 'none', background: 'transparent', cursor: 'pointer', fontSize: '1.5rem', color: isBookmarked ? '#f59e0b' : 'var(--text-muted)', padding: 0 }}>
+                                        style={{ border: 'none', background: 'transparent', cursor: 'pointer', fontSize: '1.5rem', color: isBookmarked ? '#1A3263' : 'var(--text-muted)', padding: 0 }}>
                                         {isBookmarked ? '★' : '☆'}
                                     </button>
                                 </div>
                                 <h3 style={{ fontSize: '1.1rem', fontWeight: 800, color: 'var(--text-main)', marginBottom: '0.5rem', lineHeight: 1.4 }}>{res.title}</h3>
                                 <div style={{ display: 'flex', gap: 6, marginBottom: '1rem' }}>
                                     <span style={{ fontSize: '0.65rem', background: 'var(--bg-card)', padding: '4px 8px', borderRadius: 6, color: 'var(--text-muted)', fontWeight: 800 }}>{res.type.toUpperCase()}</span>
-                                    {res.is_premium && <span style={{ fontSize: '0.65rem', background: 'linear-gradient(135deg, #f59e0b, #d97706)', padding: '4px 8px', borderRadius: 6, color: '#fff', fontWeight: 800 }}>PREMIUM</span>}
+                                    {res.is_premium && <span style={{ fontSize: '0.65rem', background: 'linear-gradient(135deg, #1A3263, #1A3263)', padding: '4px 8px', borderRadius: 6, color: '#fff', fontWeight: 800 }}>PREMIUM</span>}
                                 </div>
                                 <div style={{ display: 'flex', gap: 10 }}>
                                     <a href={res.link} target="_blank" rel="noopener noreferrer" style={{ flex: 1, textAlign: 'center', padding: '0.75rem', borderRadius: 12, background: rCat.color, color: '#fff', fontWeight: 800, fontSize: '0.85rem', textDecoration: 'none' }}>Access Resource</a>

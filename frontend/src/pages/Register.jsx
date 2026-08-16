@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
@@ -12,9 +12,15 @@ const Register = () => {
         password: ''
     });
     const [error, setError] = useState('');
-    const { register } = useAuth();
+    const { user, register, loading } = useAuth();
     const navigate = useNavigate();
     const { t } = useLanguage();
+
+    useEffect(() => {
+        if (!loading && user) {
+            navigate('/domains');
+        }
+    }, [user, loading, navigate]);
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });

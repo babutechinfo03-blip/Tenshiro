@@ -1,15 +1,17 @@
 import { useEffect, useState, useRef } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import {
     FaCheckCircle, FaCircle, FaExternalLinkAlt, FaRocket, FaLightbulb,
-    FaCode, FaCheck, FaCalendarAlt, FaSave, FaHistory, FaMagic
+    FaCode, FaCheck, FaCalendarAlt, FaSave, FaHistory, FaMagic, FaBell, FaLinkedin, FaBriefcase
 } from 'react-icons/fa';
+
 import { useLanguage } from '../context/LanguageContext';
 import { useAuth } from '../context/AuthContext';
 
 const Roadmap = () => {
     const { roleId } = useParams();
+    const navigate = useNavigate();
     const { t } = useLanguage();
     const { token } = useAuth();
     const [roleData, setRoleData] = useState(null);
@@ -20,6 +22,11 @@ const Roadmap = () => {
     const [saving, setSaving] = useState(false);
     const [duration, setDuration] = useState('3 Months');
     const [savedRoadmaps, setSavedRoadmaps] = useState([]);
+    
+    // Job alerts state
+    const [alertPlatforms, setAlertPlatforms] = useState({ linkedin: true, naukri: true, wellfound: false });
+    const [subscribingAlerts, setSubscribingAlerts] = useState(false);
+    
     const containerRef = useRef(null);
 
     useEffect(() => {
@@ -95,6 +102,25 @@ const Roadmap = () => {
     const loadSavedRoadmap = (data) => {
         setRoadmap(data);
         setViewMode('timeline');
+    };
+
+    const handleSubscribeAlerts = async () => {
+        const platforms = Object.keys(alertPlatforms).filter(k => alertPlatforms[k]);
+        if (platforms.length === 0) return alert("Please select at least one platform.");
+        
+        setSubscribingAlerts(true);
+        try {
+            const res = await axios.post('http://localhost:5000/api/auth/job-alerts',
+                { role: roleData?.title, platforms },
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+            alert(res.data.message);
+        } catch (err) {
+            console.error(err);
+            alert("Failed to subscribe to alerts.");
+        } finally {
+            setSubscribingAlerts(false);
+        }
     };
 
     if (loading) return (
@@ -229,9 +255,19 @@ const Roadmap = () => {
                                                     <h4 style={{ fontSize: '0.9rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '1rem' }}>Key Modules</h4>
                                                     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
                                                         {phase.tasks.slice(0, 3).map((task, tidx) => (
-                                                            <div key={tidx} style={{ display: 'flex', alignItems: 'center', gap: '1rem', background: 'var(--bg-secondary)', padding: '1rem', borderRadius: '1rem', border: '1px solid var(--border)' }}>
-                                                                <FaCircle style={{ fontSize: '0.5rem', color: phase.color }} />
-                                                                <span style={{ fontWeight: 600 }}>{task.title}</span>
+                                                            <div key={tidx} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'var(--bg-secondary)', padding: '1rem', borderRadius: '1rem', border: '1px solid var(--border)' }}>
+                                                                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                                                                    <FaCircle style={{ fontSize: '0.5rem', color: phase.color }} />
+                                                                    <span style={{ fontWeight: 600 }}>{task.title}</span>
+                                                                </div>
+                                                                <button 
+                                                                    onClick={() => navigate(`/learn/${encodeURIComponent(roleData.title)}/${encodeURIComponent(task.title)}`)}
+                                                                    style={{ background: 'transparent', border: `1px solid ${phase.color || 'var(--primary)'}`, color: phase.color || 'var(--primary)', padding: '0.4rem 0.8rem', borderRadius: '0.5rem', fontSize: '0.75rem', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.3rem', transition: 'all 0.2s' }}
+                                                                    onMouseEnter={(e) => { e.currentTarget.style.background = phase.color || 'var(--primary)'; e.currentTarget.style.color = 'black'; }}
+                                                                    onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = phase.color || 'var(--primary)'; }}
+                                                                >
+                                                                    <FaCode /> Learn
+                                                                </button>
                                                             </div>
                                                         ))}
                                                     </div>
@@ -309,8 +345,45 @@ const Roadmap = () => {
                             </div>
                         </div>
                     </div>
+
+                    <div className="elite-card" style={{ background: 'var(--bg-surface)' }}>
+                        <h3 style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.5rem', fontSize: '1.2rem' }}>
+                            <FaBell color="var(--primary)" /> Job Alerts
+                        </h3>
+                        <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginBottom: '1.5rem', lineHeight: 1.5 }}>
+                            Get notified instantly when top companies post openings for <b>{roleData?.title}</b>.
+                        </p>
+                        
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginBottom: '1.5rem' }}>
+                            <label style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', fontSize: '0.9rem', cursor: 'pointer' }}>
+                                <input type="checkbox" checked={alertPlatforms.linkedin} onChange={() => setAlertPlatforms(prev => ({...prev, linkedin: !prev.linkedin}))} style={{ accentColor: 'var(--primary)', width: '16px', height: '16px' }} />
+                                <FaLinkedin color="#0077b5" /> LinkedIn
+                            </label>
+                            <label style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', fontSize: '0.9rem', cursor: 'pointer' }}>
+                                <input type="checkbox" checked={alertPlatforms.naukri} onChange={() => setAlertPlatforms(prev => ({...prev, naukri: !prev.naukri}))} style={{ accentColor: 'var(--primary)', width: '16px', height: '16px' }} />
+                                <FaBriefcase color="#ff7555" /> Naukri.com
+                            </label>
+                            <label style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', fontSize: '0.9rem', cursor: 'pointer' }}>
+                                <input type="checkbox" checked={alertPlatforms.wellfound} onChange={() => setAlertPlatforms(prev => ({...prev, wellfound: !prev.wellfound}))} style={{ accentColor: 'var(--primary)', width: '16px', height: '16px' }} />
+                                <span style={{ fontWeight: 800 }}>W.</span> Wellfound
+                            </label>
+                        </div>
+                        
+                        <button 
+                            onClick={handleSubscribeAlerts}
+                            disabled={subscribingAlerts}
+                            style={{
+                                width: '100%', background: 'var(--primary)', color: 'black', border: 'none', padding: '0.75rem',
+                                borderRadius: '0.75rem', fontWeight: 700, cursor: 'pointer', transition: '0.2s',
+                                opacity: subscribingAlerts ? 0.7 : 1
+                            }}
+                        >
+                            {subscribingAlerts ? 'Subscribing...' : 'Subscribe to Alerts'}
+                        </button>
+                    </div>
                 </div>
             </div>
+
         </div>
     );
 };

@@ -450,7 +450,7 @@ const Domains = () => {
                 }
 
                 .growth-badge-small[data-type='High Demand'] { color: #1A3263; background: rgba(26, 50, 99, 0.1); }
-                .growth-badge-small[data-type='Competitive'] { color: #f59e0b; background: rgba(245, 158, 11, 0.1); }
+                .growth-badge-small[data-type='Competitive'] { color: #1A3263; background: rgba(26, 50, 99, 0.1); }
                 .growth-badge-small[data-type='Emerging'] { color: #06b6d4; background: rgba(6, 182, 212, 0.1); }
                 .growth-badge-small[data-type='Stable'] { color: #6366f1; background: rgba(99, 102, 241, 0.1); }
 

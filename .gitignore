@@ -3,3 +3,8 @@ node_modules
 dist
 build
 .DS_Store
+*.log
+out.txt
+test_out.txt
+log.txt
+git_log.txt

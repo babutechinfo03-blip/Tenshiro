@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const passport = require('passport');
+const multer = require('multer');
 const auth = require('../middleware/auth');
 const userController = require('../controllers/userController');
 const dataController = require('../controllers/dataController');
@@ -9,6 +10,14 @@ const interviewController = require('../controllers/interviewController');
 const assistantController = require('../controllers/assistantController');
 const communicationController = require('../controllers/communicationController');
 const scheduleController = require('../controllers/scheduleController');
+const resumeController = require('../controllers/resumeController');
+const academyController = require('../controllers/academyController');
+
+// Multer configurations for file upload memory storage
+const upload = multer({ 
+    storage: multer.memoryStorage(),
+    limits: { fileSize: 5 * 1024 * 1024 } // 5MB limit
+});
 
 // Auth Routes
 router.post('/auth/register', userController.register);
@@ -16,6 +25,7 @@ router.post('/auth/login', userController.login);
 router.post('/auth/dev-login', userController.devLogin);
 router.get('/auth/user', auth, userController.getProfile);
 router.put('/auth/update-language', auth, userController.updateLanguage);
+router.post('/auth/job-alerts', auth, userController.subscribeJobAlerts);
 
 // Google OAuth Routes
 router.get('/auth/google',
@@ -57,6 +67,7 @@ router.post('/ai/job-recommendation', auth, aiController.jobRecommendation); // 
 router.post('/ai/placement-guidance', auth, aiController.placementGuidance); // New
 router.post('/ai/roadmap', auth, aiController.generateRoadmap); // New
 router.post('/ai/translate', auth, aiController.translate); // New
+router.post('/ai/skill-tutorial', auth, aiController.getSkillTutorial); // New
 
 // Interview Intelligence Routes
 router.post('/interview/generate', auth, interviewController.generateQuestions);
@@ -90,5 +101,23 @@ router.post('/pathpilot-ai', assistantController.pathpilotChat);
 
 // Legacy endpoint (backward compat)
 router.post('/assistant', assistantController.chat);
+
+// Resume Intelligence Routes
+router.post('/resume/analyze', auth, resumeController.analyze);
+router.get('/resume/history', auth, resumeController.getHistory);
+router.get('/resume/history/:id', auth, resumeController.getById);
+router.delete('/resume/history/:id', auth, resumeController.delete);
+router.post('/resume/extract', auth, upload.single('resume'), resumeController.extract);
+router.post('/resume/enhance', auth, resumeController.enhance);
+router.get('/resume/templates', auth, resumeController.getTemplates);
+router.post('/resume/templates', auth, resumeController.createTemplate);
+
+// Career Learning Academy Routes
+router.post('/academy/curriculum', auth, academyController.getCurriculum);
+router.post('/academy/lesson', auth, academyController.getLessonContent);
+router.post('/academy/progress', auth, academyController.updateProgress);
+router.get('/academy/progress/:role/:skill', auth, academyController.getUserProgress);
+router.get('/academy/gamification', auth, academyController.getGamificationProfile);
+router.post('/academy/ask-tutor', auth, academyController.askAITutor);
 
 module.exports = router;
