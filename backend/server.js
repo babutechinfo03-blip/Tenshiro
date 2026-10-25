@@ -86,6 +86,15 @@ app.use(helmet());
 app.use(express.json());
 app.use(passport.initialize());
 
+// Health check & root endpoints
+app.get('/', (req, res) => {
+    res.json({ status: 'ok', message: 'Tenshiro Backend API is running' });
+});
+
+app.get('/health', (req, res) => {
+    res.json({ status: 'healthy', uptime: process.uptime() });
+});
+
 // Routes
 const apiRoutes = require('./routes/api');
 const aptitudeRoutes = require('./routes/aptitudeRoutes');
@@ -131,8 +140,5 @@ process.on('unhandledRejection', (err, promise) => {
 // Handle uncaught exceptions
 process.on('uncaughtException', (err) => {
     console.error('Uncaught Exception:', err);
-    // Keep the process alive for a bit to ensure log is flushed
-    setTimeout(() => {
-        process.exit(1);
-    }, 1000);
+    // Log error to console without immediately exiting process to keep server alive
 });
