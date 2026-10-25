@@ -28,20 +28,28 @@ router.put('/auth/update-language', auth, userController.updateLanguage);
 router.post('/auth/job-alerts', auth, userController.subscribeJobAlerts);
 
 // Google OAuth Routes
-router.get('/auth/google',
+const googleAuthMiddleware = (req, res, next) => {
+    if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET || process.env.GOOGLE_CLIENT_ID === 'your_google_client_id') {
+        return res.status(503).json({ error: 'Google OAuth is not configured on this server' });
+    }
     passport.authenticate('google', {
         scope: ['profile', 'email'],
         session: false
-    })
-);
+    })(req, res, next);
+};
 
-router.get('/auth/google/callback',
+const googleCallbackMiddleware = (req, res, next) => {
+    if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET || process.env.GOOGLE_CLIENT_ID === 'your_google_client_id') {
+        return res.redirect((process.env.FRONTEND_URL || 'http://localhost:5173') + '/login?error=oauth_not_configured');
+    }
     passport.authenticate('google', {
         session: false,
         failureRedirect: (process.env.FRONTEND_URL || 'http://localhost:5173') + '/login?error=auth_failed'
-    }),
-    userController.googleAuth
-);
+    })(req, res, next);
+};
+
+router.get('/auth/google', googleAuthMiddleware);
+router.get('/auth/google/callback', googleCallbackMiddleware, userController.googleAuth);
 
 // Data Routes
 router.get('/domains', auth, dataController.getDomains);

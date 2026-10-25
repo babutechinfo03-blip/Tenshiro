@@ -3,11 +3,12 @@ const db = require('./db');
 const jwt = require('jsonwebtoken');
 
 module.exports = (passport) => {
-    passport.use(new GoogleStrategy({
-        clientID: process.env.GOOGLE_CLIENT_ID,
-        clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-        callbackURL: process.env.GOOGLE_CALLBACK_URL
-    },
+    if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET && process.env.GOOGLE_CLIENT_ID !== 'your_google_client_id') {
+        passport.use(new GoogleStrategy({
+            clientID: process.env.GOOGLE_CLIENT_ID,
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+            callbackURL: process.env.GOOGLE_CALLBACK_URL || '/api/auth/google/callback'
+        },
         async (accessToken, refreshToken, profile, done) => {
             try {
                 const email = profile.emails[0].value;
@@ -41,4 +42,8 @@ module.exports = (passport) => {
                 return done(error, null);
             }
         }));
+        console.log('✅ Google OAuth configured successfully');
+    } else {
+        console.log('⚠️ Google OAuth credentials not set. Google login disabled.');
+    }
 };
