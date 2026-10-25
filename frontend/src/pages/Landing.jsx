@@ -133,17 +133,17 @@ const Landing = () => {
                                     <span>AI-Powered Career Intelligence Platform</span>
                                 </div>
 
-                                <h1 className="hero-headline-saas" style={{ color: 'white' }}>
+                                <h1 className="hero-headline-saas">
                                     Design Your Career Path <br />
                                     <span style={{ color: 'var(--primary)' }}>Build Job-Ready Skills With AI</span>
                                 </h1>
 
-                                <h2 className="hero-subtitle-saas" style={{ color: 'rgba(255,255,255,0.9)' }}>
+                                <h2 className="hero-subtitle-saas">
                                     From career discovery to job readiness — <br />
                                     all in one intelligent platform.
                                 </h2>
 
-                                <p className="hero-desc-saas" style={{ color: 'rgba(255,255,255,0.7)' }}>
+                                <p className="hero-desc-saas">
                                     Tenshiro helps students discover career domains, build real-world skills,
                                     improve communication, prepare for interviews, and apply for internships and jobs using AI-powered guidance.
                                 </p>
@@ -160,7 +160,6 @@ const Landing = () => {
                                         whileHover={{ scale: 1.05 }}
                                         onClick={() => document.getElementById('platform')?.scrollIntoView({ behavior: 'smooth' })}
                                         className="btn-saas-secondary"
-                                        style={{ background: 'rgba(255,255,255,0.1)', color: 'white', borderColor: 'rgba(255,255,255,0.3)' }}
                                     >
                                         Explore Career Domains
                                     </Motion.button>
@@ -417,6 +416,10 @@ const Landing = () => {
             }
             .hero-dark-mask {
                 position: absolute; inset: 0;
+                background: linear-gradient(to right, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.82) 100%);
+                transition: background 0.4s ease;
+            }
+            [data-theme='dark'] .hero-dark-mask {
                 background: linear-gradient(to right, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.4) 100%);
             }
 

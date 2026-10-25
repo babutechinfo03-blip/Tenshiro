@@ -137,14 +137,15 @@ const Navbar = ({ onToggleSidebar, onLoginClick, onRegisterClick }) => {
                         <button
                             onClick={onRegisterClick}
                             style={{
-                                background: 'var(--text-main)',
-                                color: 'var(--bg-secondary)',
+                                background: '#1A3263',
+                                color: '#ffffff',
                                 padding: '12px 28px',
                                 border: 'none',
                                 borderRadius: '12px',
                                 fontWeight: '700',
                                 fontSize: '1rem',
                                 cursor: 'pointer',
+                                boxShadow: '0 4px 14px rgba(26, 50, 99, 0.25)',
                                 transition: 'all 0.3s'
                             }}
                             className="btn-register-premium"
