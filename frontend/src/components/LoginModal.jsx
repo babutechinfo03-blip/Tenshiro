@@ -6,7 +6,7 @@ import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 
-const LoginModal = ({ isOpen, onClose, onRegisterClick }) => {
+const LoginModal = ({ isOpen, onClose, onRegisterClick, onGoogleLogin }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
@@ -203,6 +203,7 @@ const LoginModal = ({ isOpen, onClose, onRegisterClick }) => {
                         </div>
 
                         <button
+                            onClick={onGoogleLogin}
                             style={{
                                 display: 'flex',
                                 alignItems: 'center',

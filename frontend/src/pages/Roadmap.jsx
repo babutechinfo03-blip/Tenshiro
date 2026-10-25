@@ -37,12 +37,12 @@ const Roadmap = () => {
     const fetchData = async () => {
         try {
             setLoading(true);
-            const roleRes = await axios.get(`http://localhost:5000/api/roles/${roleId}`, {
+            const roleRes = await axios.get(`/api/roles/${roleId}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setRoleData(roleRes.data);
 
-            const roadmapRes = await axios.get(`http://localhost:5000/api/roles/${roleId}/roadmap`, {
+            const roadmapRes = await axios.get(`/api/roles/${roleId}/roadmap`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setRoadmap(roadmapRes.data);
@@ -55,7 +55,7 @@ const Roadmap = () => {
 
     const fetchSavedRoadmaps = async () => {
         try {
-            const res = await axios.get('http://localhost:5000/api/ai/my-roadmaps', {
+            const res = await axios.get('/api/ai/my-roadmaps', {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setSavedRoadmaps(res.data);
@@ -68,7 +68,7 @@ const Roadmap = () => {
         if (!roleData) return;
         setGenerating(true);
         try {
-            const res = await axios.post('http://localhost:5000/api/ai/roadmap',
+            const res = await axios.post('/api/ai/roadmap',
                 { role: roleData.title, duration },
                 { headers: { Authorization: `Bearer ${token}` } }
             );
@@ -86,7 +86,7 @@ const Roadmap = () => {
         if (!roleData || roadmap.length === 0) return;
         setSaving(true);
         try {
-            await axios.post('http://localhost:5000/api/ai/save-roadmap',
+            await axios.post('/api/ai/save-roadmap',
                 { roleTitle: roleData.title, roadmapData: roadmap },
                 { headers: { Authorization: `Bearer ${token}` } }
             );
@@ -110,7 +110,7 @@ const Roadmap = () => {
         
         setSubscribingAlerts(true);
         try {
-            const res = await axios.post('http://localhost:5000/api/auth/job-alerts',
+            const res = await axios.post('/api/auth/job-alerts',
                 { role: roleData?.title, platforms },
                 { headers: { Authorization: `Bearer ${token}` } }
             );

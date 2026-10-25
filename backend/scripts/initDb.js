@@ -6,25 +6,17 @@ require('dotenv').config({ path: path.join(__dirname, '../.env') });
 async function initializeDatabase() {
     let connection;
     try {
-        // 1. Connect to MySQL server (without database)
+        // 1. Connect directly to the database
         console.log('Connecting to MySQL server...');
         connection = await mysql.createConnection({
             host: process.env.DB_HOST,
             user: process.env.DB_USER,
             password: process.env.DB_PASSWORD,
+            database: process.env.DB_NAME,
             multipleStatements: true
         });
 
         console.log('Connected.');
-
-        // 2. Create Database
-        console.log(`Creating database '${process.env.DB_NAME}' if not exists...`);
-        await connection.query(`CREATE DATABASE IF NOT EXISTS ${process.env.DB_NAME}`);
-        console.log('Database created/verified.');
-
-        // 3. Select Database
-        await connection.changeUser({ database: process.env.DB_NAME });
-        console.log(`Selected database '${process.env.DB_NAME}'.`);
 
         // 4. Read and Execute Schema
         console.log('Executing schema.sql...');

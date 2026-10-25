@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { FaPlay, FaCheckCircle, FaTimesCircle, FaTrophy, FaFire, FaRobot, FaPaperPlane } from 'react-icons/fa';
 import axios from 'axios';
 
-const API = 'http://localhost:5000/api';
+const API = '/api';
 
 // ----------------------------------------------------------------------
 // 1. Live Code Editor

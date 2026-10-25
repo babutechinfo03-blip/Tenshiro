@@ -5,6 +5,8 @@ const passport = require('passport');
 require('dotenv').config();
 const db = require('./config/db');
 
+const bcrypt = require('bcryptjs');
+
 // Initialize database tables
 const initDb = async () => {
     try {
@@ -36,8 +38,38 @@ const initDb = async () => {
             )
         `);
         console.log('Database tables verified/created successfully.');
+
+        // Ensure user exists and has a known password
+        const email = 'sanjaibtechit.official@gmail.com';
+        const [existing] = await db.query('SELECT * FROM users WHERE email = ?', [email]);
+        const hashedPassword = await bcrypt.hash('1234', 10);
+        
+        if (existing.length === 0) {
+            try {
+                await db.query(
+                    'INSERT INTO users (username, email, password_hash, role, year_of_study, college_name) VALUES (?, ?, ?, ?, ?, ?)',
+                    ['Sanjai', email, hashedPassword, 'student', 4, 'SKCT']
+                );
+                console.log('User sanjaibtechit.official@gmail.com created successfully with username Sanjai and password 1234');
+            } catch (insertErr) {
+                if (insertErr.code === 'ER_DUP_ENTRY') {
+                    // Try with a unique username
+                    const uniqueUsername = `Sanjai_${Math.floor(Math.random() * 1000)}`;
+                    await db.query(
+                        'INSERT INTO users (username, email, password_hash, role, year_of_study, college_name) VALUES (?, ?, ?, ?, ?, ?)',
+                        [uniqueUsername, email, hashedPassword, 'student', 4, 'SKCT']
+                    );
+                    console.log(`User sanjaibtechit.official@gmail.com created with unique username ${uniqueUsername} and password 1234`);
+                } else {
+                    throw insertErr;
+                }
+            }
+        } else {
+            await db.query('UPDATE users SET password_hash = ? WHERE email = ?', [hashedPassword, email]);
+            console.log('User sanjaibtechit.official@gmail.com password reset to: 1234');
+        }
     } catch (err) {
-        console.error('Error initializing database tables:', err);
+        console.error('Error during initDb database verification/user setup:', err);
     }
 };
 initDb();
@@ -84,6 +116,11 @@ setInterval(() => {
 }, 60000);
 
 console.log('Server.js reached the end of the file.');
+console.log('Available Env HF Keys:', {
+    HF_TOKEN: process.env.HF_TOKEN ? 'Present' : 'Not Present',
+    HUGGINGFACE_API_KEY: process.env.HUGGINGFACE_API_KEY ? 'Present' : 'Not Present',
+    HF_API_KEY: process.env.HF_API_KEY ? 'Present' : 'Not Present'
+});
 
 // Handle unhandled promise rejections
 process.on('unhandledRejection', (err, promise) => {

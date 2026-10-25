@@ -587,9 +587,9 @@ exports.getPremiumOverview = async (req, res) => {
                 summary: "Orchestrating complex distributed systems to drive technical innovation and operational efficiency at scale. Directly impacts business velocity and core platform reliability."
             },
             market_intelligence: [
-                { label: "COMPENSATION INTELLIGENCE", value: "₹25L - ₹45L", detail: "Top 5% exceed ₹1.2Cr" },
-                { label: "DEMAND VELOCITY", value: "Accelerating", detail: "32% YoY headcount growth" },
-                { label: "CAREER GROWTH PROJECTION", value: "24% CAGR", detail: "High demand for mid-senior architects" },
+                { label: "COMPENSATION INTELLIGENCE", value: "₹8L - ₹18L", detail: "Top 10% exceed ₹30L" },
+                { label: "DEMAND VELOCITY", value: "Accelerating", detail: "18% YoY headcount growth" },
+                { label: "CAREER GROWTH PROJECTION", value: "12% CAGR", detail: "Steady demand for mid-level roles" },
                 { label: "AI AUTOMATION EXPOSURE", value: "Low", detail: "Complex reasoning and system design core" }
             ],
             execution_domains: [
@@ -616,11 +616,11 @@ exports.getPremiumOverview = async (req, res) => {
             },
             industry_adoption: ["Technology", "FinTech", "HealthTech", "E-Commerce", "SaaS"],
             career_progression: [
-                { level: "Entry", years: "0-2", salary: "₹8L - ₹15L" },
-                { level: "Mid", years: "3-5", salary: "₹18L - ₹32L" },
-                { level: "Senior", years: "6-10", salary: "₹35L - ₹65L" },
-                { level: "Lead/Architect", years: "10-15", salary: "₹70L - ₹1.5Cr" },
-                { level: "Principal/Director", years: "15+", salary: "Executive Compensation" }
+                { level: "Entry", years: "0-2", salary: "₹3L - ₹7L" },
+                { level: "Mid", years: "3-5", salary: "₹8L - ₹15L" },
+                { level: "Senior", years: "6-10", salary: "₹16L - ₹28L" },
+                { level: "Lead/Architect", years: "10-15", salary: "₹28L - ₹50L" },
+                { level: "Principal/Director", years: "15+", salary: "₹50L - ₹80L" }
             ],
             future_outlook: {
                 forecast: "Critical dominance in enterprise infrastructure for the next decade.",

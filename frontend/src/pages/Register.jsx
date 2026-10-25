@@ -37,7 +37,8 @@ const Register = () => {
     };
 
     const handleGoogleRegister = () => {
-        window.location.href = 'http://localhost:5000/api/auth/google';
+        const apiBase = import.meta.env.VITE_API_URL || '';
+        window.location.href = `${apiBase}/api/auth/google`;
     };
 
     return (

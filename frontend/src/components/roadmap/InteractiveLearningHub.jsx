@@ -21,7 +21,7 @@ const InteractiveLearningHub = ({ skill, role, onClose }) => {
     const fetchTutorial = async () => {
         try {
             setLoading(true);
-            const res = await axios.post('http://localhost:5000/api/ai/skill-tutorial', 
+            const res = await axios.post('/api/ai/skill-tutorial', 
                 { skill, role, language },
                 { headers: { Authorization: `Bearer ${token}` } }
             );

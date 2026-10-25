@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 
-const RegisterModal = ({ isOpen, onClose, onLoginClick }) => {
+const RegisterModal = ({ isOpen, onClose, onLoginClick, onGoogleLogin }) => {
     const [formData, setFormData] = useState({
         username: '',
         email: '',
@@ -233,6 +233,7 @@ const RegisterModal = ({ isOpen, onClose, onLoginClick }) => {
                         </div>
 
                         <button
+                            onClick={onGoogleLogin}
                             style={{
                                 display: 'flex',
                                 alignItems: 'center',

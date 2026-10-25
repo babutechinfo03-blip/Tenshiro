@@ -122,7 +122,8 @@ const AIChatAssistant = () => {
             speak(aiText, detectedLang);
         } catch (error) {
             console.error("AI Assistant Error:", error);
-            const errorMsg = { id: Date.now() + 1, text: "Sorry, I'm having trouble connecting to my brain right now.", sender: 'ai' };
+            const apiError = error.response?.data?.error || error.message || "Failed to connect to assistant.";
+            const errorMsg = { id: Date.now() + 1, text: `Error: ${apiError}`, sender: 'ai' };
             setMessages(prev => [...prev, errorMsg]);
             setIsThinking(false);
         }
